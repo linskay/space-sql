@@ -9,32 +9,27 @@ import lombok.*;
 @Entity
 @Table(name = "task")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Title is required")
-    @Size(max = 255, message = "Title must be less than 255 characters")
+    @ManyToOne
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
+
+    @Column(length = 255)
     private String title;
 
-    @NotBlank(message = "Description is required")
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @NotBlank(message = "Schema definition is required")
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String schemaDefinition;
 
-    @NotBlank(message = "Solution query is required")
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String solutionQuery;
-
-    @NotNull(message = "Lesson is required")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
 }

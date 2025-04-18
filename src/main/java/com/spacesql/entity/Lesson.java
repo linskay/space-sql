@@ -13,30 +13,24 @@ import java.util.List;
 @Entity
 @Table(name = "lesson")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Title is required")
-    @Size(max = 255, message = "Title must be less than 255 characters")
+    @Column(length = 255)
     private String title;
 
-    @NotBlank(message = "Description is required")
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @NotBlank(message = "Topic is required")
-    @Size(max = 100, message = "Topic must be less than 100 characters")
+    @Column(length = 100)
     private String topic;
 
-    @NotBlank(message = "Difficulty is required")
-    @Size(max = 50, message = "Difficulty must be less than 50 characters")
+    @Column(length = 50)
     private String difficulty;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     private List<Task> tasks;
 }
