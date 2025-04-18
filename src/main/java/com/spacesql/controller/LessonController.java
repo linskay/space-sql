@@ -22,7 +22,7 @@ public class LessonController {
 
     @GetMapping("/{lessonId}/tasks")
     public ResponseEntity<List<TaskDto>> getTasksByLessonId(@PathVariable Long lessonId) {
-        List<TaskDto> tasks = lessonService.findTasksByLessonId(lessonId);
+        List<TaskDto> tasks = lessonService.findLessonById(lessonId).getTasks();
         return ResponseEntity.ok(tasks);
     }
 
