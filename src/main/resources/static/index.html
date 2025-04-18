@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Космический Тренажер</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --space-blue: #0d0221;
+            --neon-purple: #9d00ff;
+            --cosmic-blue: #2b00ff;
+            --starlight: #f8f8ff;
+            --mystic-purple: #6a00f4;
+            --sql-green: #00ff9d;
+            --error-red: #ff3860;
+            --neon-pink: #ff00ff;
+            --neon-cyan: #00ffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', 'Press Start 2P', cursive;
+        }
+
+        body {
+            background-color: var(--space-blue);
+            color: var(--starlight);
+            overflow-x: hidden;
+            min-height: 100vh;
+            perspective: 1000px;
+            background-image:
+                    radial-gradient(circle at 20% 30%, rgba(154, 0, 255, 0.15) 0%, transparent 30%),
+                    radial-gradient(circle at 80% 70%, rgba(43, 0, 255, 0.15) 0%, transparent 30%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--starlight);
+            text-shadow: 0 0 10px var(--neon-purple),
+            0 0 20px var(--cosmic-blue),
+            0 0 30px var(--sql-green);
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(90deg, var(--neon-purple), var(--sql-green), var(--cosmic-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            padding: 0 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--cosmic-blue); }
+            to { text-shadow: 0 0 15px var(--neon-purple), 0 0 25px var(--cosmic-blue), 0 0 35px var(--sql-green); }
+        }
+
+        .links-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .link-card {
+            background: rgba(13, 2, 33, 0.7);
+            border: 1px solid var(--neon-purple);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--neon-purple);
+        }
+
+        .link-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--starlight);
+            display: flex;
+            align-items: center;
+        }
+
+        .link-icon {
+            margin-right: 0.8rem;
+            color: var(--sql-green);
+        }
+
+        .lesson-container {
+            display: none;
+            margin-top: 2rem;
+            background: rgba(13, 2, 33, 0.8);
+            border: 1px solid var(--neon-purple);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .task-content {
+            margin-bottom: 2rem;
+        }
+
+        .task-header h3 {
+            color: var(--sql-green);
+            margin-bottom: 1rem;
+        }
+
+        .task-schema pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            color: var(--sql-green);
+        }
+
+        .query-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--sql-green);
+            color: var(--sql-green);
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            min-height: 150px;
+        }
+
+        .query-submit {
+            background: linear-gradient(90deg, var(--neon-purple), var(--sql-green));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .query-submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px var(--sql-green);
+        }
+
+        .result-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--sql-green);
+            color: var(--sql-green);
+        }
+
+        .error {
+            background: rgba(255, 56, 96, 0.1);
+            border: 1px solid var(--error-red);
+            color: var(--error-red);
+        }
+
+        .task-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+
+        .nav-button {
+            background: rgba(106, 0, 244, 0.3);
+            border: 1px solid var(--neon-purple);
+            color: var(--starlight);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background: rgba(106, 0, 244, 0.5);
+        }
+
+        .back-button {
+            background: rgba(43, 0, 255, 0.3);
+            border: 1px solid var(--cosmic-blue);
+            color: var(--starlight);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>SQL КОСМИЧЕСКИЙ ТРЕНАЖЕР</h1>
+        <p class="subtitle">Изучайте SQL, покоряя цифровую вселенную</p>
+    </header>
+
+    <div class="links-container" id="lessons-container">
+        <!-- Уроки будут загружены здесь -->
+    </div>
+
+    <div class="lesson-container" id="lesson-details">
+        <button class="back-button" id="back-button">
+            <i class="fas fa-arrow-left"></i> Назад к урокам
+        </button>
+
+        <h2 id="lesson-title" class="link-title"></h2>
+        <p id="lesson-description" class="link-description"></p>
+
+        <div id="task-container" class="task-content"></div>
+
+        <div class="task-navigation">
+            <button id="prev-task-btn" class="nav-button">
+                <i class="fas fa-chevron-left"></i> Предыдущее
+            </button>
+            <button id="next-task-btn" class="nav-button">
+                Следующее <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="sql-input-container">
+            <h3 class="link-title"><i class="fas fa-terminal"></i> Ваш SQL запрос:</h3>
+            <textarea id="query-input" class="query-input" placeholder="Введите ваш SQL запрос здесь..."></textarea>
+            <button id="query-submit" class="query-submit">
+                <i class="fas fa-paper-plane"></i> Проверить запрос
+            </button>
+        </div>
+
+        <div id="query-result" class="result-container"></div>
+    </div>
+</div>
+
+<script>
+    // Глобальные переменные состояния
+    let currentLesson = null;
+    let tasks = [];
+    let currentTaskIndex = 0;
+
+    // Загрузка уроков при старте
+    document.addEventListener('DOMContentLoaded', async function() {
+        await loadLessons();
+        setupEventListeners();
+    });
+
+    // Загрузка списка уроков
+    async function loadLessons() {
+        try {
+            const response = await fetch('http://localhost:8080/api/lessons');
+            if (!response.ok) throw new Error('Ошибка загрузки уроков');
+
+            const lessons = await response.json();
+            displayLessons(lessons);
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showError('Не удалось загрузить уроки');
+        }
+    }
+
+    // Отображение списка уроков
+    function displayLessons(lessons) {
+        const container = document.getElementById('lessons-container');
+        container.innerHTML = '';
+
+        lessons.forEach(lesson => {
+            const lessonCard = document.createElement('div');
+            lessonCard.className = 'link-card';
+            lessonCard.innerHTML = `
+                <h3 class="link-title">
+                    <i class="fas fa-database link-icon"></i>
+                    ${lesson.title}
+                </h3>
+                <p class="link-description">${lesson.description}</p>
+                <button class="query-submit start-lesson" data-id="${lesson.id}">
+                    Начать урок
+                </button>
+            `;
+            container.appendChild(lessonCard);
+        });
+    }
+
+    // Загрузка деталей урока и заданий
+    async function loadLessonDetails(lessonId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/lessons/${lessonId}`);
+            if (!response.ok) throw new Error('Ошибка загрузки урока');
+
+            currentLesson = await response.json();
+            tasks = currentLesson.tasks || [];
+
+            if (tasks.length === 0) {
+                throw new Error('Для этого урока нет заданий');
+            }
+
+            showTask(0);
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showError(error.message);
+        }
+    }
+
+    // Отображение задания
+    function showTask(taskIndex) {
+        if (taskIndex < 0 || taskIndex >= tasks.length) return;
+
+        currentTaskIndex = taskIndex;
+        const task = tasks[taskIndex];
+
+        document.getElementById('lesson-title').innerHTML = `
+            <i class="fas fa-database"></i> ${currentLesson.title}
+        `;
+
+        document.getElementById('lesson-description').textContent = currentLesson.description;
+
+        document.getElementById('task-container').innerHTML = `
+            <h3>Задание ${taskIndex + 1} из ${tasks.length}</h3>
+            <p>${task.description || 'Описание отсутствует'}</p>
+            <h4><i class="fas fa-database"></i> Схема базы данных:</h4>
+            <pre>${task.schemaDefinition || 'Схема не предоставлена'}</pre>
+        `;
+
+        document.getElementById('lessons-container').style.display = 'none';
+        document.getElementById('lesson-details').style.display = 'block';
+        document.getElementById('query-result').style.display = 'none';
+        document.getElementById('query-input').value = '';
+
+        updateNavigationButtons();
+    }
+
+    // Обновление кнопок навигации
+    function updateNavigationButtons() {
+        document.getElementById('prev-task-btn').style.visibility =
+            currentTaskIndex > 0 ? 'visible' : 'hidden';
+        document.getElementById('next-task-btn').style.visibility =
+            currentTaskIndex < tasks.length - 1 ? 'visible' : 'hidden';
+    }
+
+    // Проверка SQL запроса
+    async function checkQuery() {
+        const task = tasks[currentTaskIndex];
+        if (!task) {
+            showResult('Задание не загружено', false);
+            return;
+        }
+
+        const userQuery = document.getElementById('query-input').value.trim();
+        if (!userQuery) {
+            showResult('Введите SQL запрос', false);
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/query/check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    taskId: task.id,
+                    userQuery: userQuery
+                })
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || 'Ошибка сервера');
+
+            showResult(result.message, result.correct);
+        } catch (error) {
+            showResult(`Ошибка: ${error.message}`, false);
+        }
+    }
+
+    // Показать результат
+    function showResult(message, isSuccess) {
+        const resultContainer = document.getElementById('query-result');
+        resultContainer.innerHTML = `
+            <i class="fas ${isSuccess ? 'fa-check' : 'fa-times'}"></i>
+            ${message}
+        `;
+        resultContainer.className = `result-container ${isSuccess ? 'success' : 'error'}`;
+        resultContainer.style.display = 'block';
+    }
+
+    // Показать ошибку
+    function showError(message) {
+        const container = document.getElementById('lessons-container');
+        container.innerHTML = `
+            <div class="link-card" style="grid-column: 1 / -1; text-align: center;">
+                <h3 class="link-title"><i class="fas fa-exclamation-triangle"></i> Ошибка</h3>
+                <p>${message}</p>
+                <button class="query-submit" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i> Обновить
+                </button>
+            </div>
+        `;
+    }
+
+    // Настройка обработчиков событий
+    function setupEventListeners() {
+        // Нажатие на кнопку "Начать урок"
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('start-lesson')) {
+                const lessonId = e.target.getAttribute('data-id');
+                loadLessonDetails(lessonId);
+            }
+        });
+
+        // Кнопка "Назад"
+        document.getElementById('back-button').addEventListener('click', function() {
+            document.getElementById('lesson-details').style.display = 'none';
+            document.getElementById('lessons-container').style.display = 'grid';
+        });
+
+        // Кнопка "Проверить запрос"
+        document.getElementById('query-submit').addEventListener('click', checkQuery);
+
+        // Навигация по заданиям
+        document.getElementById('prev-task-btn').addEventListener('click', function() {
+            if (currentTaskIndex > 0) {
+                showTask(currentTaskIndex - 1);
+            }
+        });
+
+        document.getElementById('next-task-btn').addEventListener('click', function() {
+            if (currentTaskIndex < tasks.length - 1) {
+                showTask(currentTaskIndex + 1);
+            }
+        });
+
+        // Отправка запроса по Ctrl+Enter
+        document.getElementById('query-input').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                checkQuery();
+            }
+        });
+    }
+</script>
+</body>
+</html>

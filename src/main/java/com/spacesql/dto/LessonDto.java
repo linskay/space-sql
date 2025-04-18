@@ -8,14 +8,15 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class LessonDto {
     private Long id;
     private String title;
     private String description;
     private String topic;
     private String difficulty;
+    private Integer orderIndex;
     private List<TaskDto> tasks;
 }

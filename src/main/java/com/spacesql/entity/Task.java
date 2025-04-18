@@ -1,35 +1,36 @@
 package com.spacesql.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
 @Table(name = "task")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "lesson_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
-    @Column(length = 255)
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "schema_definition", columnDefinition = "TEXT", nullable = false)
     private String schemaDefinition;
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "solution_query", columnDefinition = "TEXT", nullable = false)
     private String solutionQuery;
+
+    @Column(name = "order_index", nullable = false)
+    private Integer orderIndex;
 }
