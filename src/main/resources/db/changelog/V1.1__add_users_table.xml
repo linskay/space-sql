@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.19.xsd">
+
+    <changeSet id="1.1" author="space-sql">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="github_username" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="avatar_url" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="progress" type="INTEGER" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Добавление начальных данных -->
+    <changeSet id="1.2" author="space-sql">
+        <insert tableName="users">
+            <column name="github_username" value="test_user"/>
+            <column name="avatar_url" value="https://example.com/avatar.png"/>
+            <column name="progress" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
