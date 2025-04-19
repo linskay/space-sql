@@ -2,6 +2,7 @@ let currentLesson = null;
 let tasks = [];
 let currentTaskIndex = 0;
 let schemaTimeout = null;
+let isEyeAnimationEnabled = true;
 
 const motivationalMessages = [
     "SELECT * FROM success;",
@@ -26,12 +27,76 @@ const motivationalMessages = [
     "Функция успеха() возвращает true!"
 ];
 
+const SQL_KEYWORDS = [
+    'SELECT', 'FROM', 'WHERE', 'JOIN', 'INNER JOIN', 'LEFT JOIN',
+    'RIGHT JOIN', 'GROUP BY', 'ORDER BY', 'HAVING', 'INSERT INTO',
+    'UPDATE', 'DELETE FROM', 'CREATE TABLE', 'ALTER TABLE', 'DROP TABLE',
+    'AND', 'OR', 'NOT', 'IN', 'BETWEEN', 'LIKE', 'IS NULL', 'COUNT',
+    'SUM', 'AVG', 'MIN', 'MAX', 'DISTINCT', 'AS', 'LIMIT', 'OFFSET'
+];
+
+function setupQueryInput() {
+    const queryInput = document.getElementById('query-input');
+    const hintsContainer = document.getElementById('query-hints');
+
+    queryInput.addEventListener('input', function() {
+        const cursorPos = this.selectionStart;
+        const textBeforeCursor = this.value.substring(0, cursorPos);
+        const lastWord = textBeforeCursor.split(/\s+/).pop().toUpperCase();
+
+        if (lastWord.length > 1) {
+            const matchingKeywords = SQL_KEYWORDS.filter(kw =>
+                kw.startsWith(lastWord)
+            );
+
+            if (matchingKeywords.length > 0) {
+                hintsContainer.innerHTML = matchingKeywords.map(kw =>
+                    `<span class="query-hint">${kw}</span>`
+                ).join('');
+                hintsContainer.style.display = 'block';
+            } else {
+                hintsContainer.style.display = 'none';
+            }
+        } else {
+            hintsContainer.style.display = 'none';
+        }
+    });
+
+    queryInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab' && hintsContainer.style.display === 'block') {
+            e.preventDefault();
+            const hint = hintsContainer.querySelector('.query-hint');
+            if (hint) {
+                const wordToComplete = hint.textContent;
+                const cursorPos = this.selectionStart;
+                const textBeforeCursor = this.value.substring(0, cursorPos);
+                const lastSpacePos = textBeforeCursor.lastIndexOf(' ');
+                const textToInsert = wordToComplete.substring(
+                    textBeforeCursor.substring(lastSpacePos + 1).length
+                );
+
+                this.value = this.value.substring(0, cursorPos) +
+                    textToInsert +
+                    this.value.substring(cursorPos);
+                this.selectionStart = cursorPos + textToInsert.length;
+                this.selectionEnd = cursorPos + textToInsert.length;
+                hintsContainer.style.display = 'none';
+            }
+        }
+    });
+
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    queryInput.parentNode.insertBefore(cursor, queryInput.nextSibling);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     createFloatingSymbols();
     await loadLessons();
     setupEventListeners();
     checkAuthStatus();
     startMysticEyeMessages();
+    setupQueryInput();
 });
 
 async function checkAuthStatus() {
@@ -102,6 +167,8 @@ function showRandomEyeMessage() {
 
 function showEyeMessage(message) {
     const eye = document.getElementById('mystic-eye');
+    if (!eye) return;
+
     const messageElement = document.createElement('div');
     messageElement.className = 'eye-message';
     messageElement.textContent = message;
@@ -130,6 +197,8 @@ async function loadLessons() {
 
 function displayLessons(lessons) {
     const container = document.getElementById('lessons-container');
+    if (!container) return;
+
     container.innerHTML = '';
 
     const lessonIcons = {
@@ -254,6 +323,7 @@ async function showTask(taskIndex) {
 
 function displayExampleData(exampleData) {
     const container = document.querySelector('.example-data-content');
+    if (!container) return;
 
     if (exampleData && exampleData.rows && exampleData.rows.length > 0) {
         const columns = Object.keys(exampleData.rows[0]);
@@ -281,6 +351,7 @@ function displayExampleData(exampleData) {
 
 function displayGeneratedExampleData(schemaDefinition, description) {
     const container = document.querySelector('.example-data-content');
+    if (!container) return;
     container.innerHTML = generateExampleData(schemaDefinition, description);
 }
 
@@ -392,60 +463,32 @@ async function checkQuery() {
         const response = await fetch('/api/tasks/check', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': getCsrfToken()
             },
+            credentials: 'include',
             body: JSON.stringify({
                 taskId: task.id,
-                query: query
+                userQuery: query
             })
         });
 
-        const result = await response.json();
         if (!response.ok) {
-            throw new Error(result.message || 'Ошибка сервера');
+            throw new Error('Ошибка сервера');
         }
 
-        showResult(result.message, result.correct);
-        if (result.correct) {
-            createJoinEffect();
-        }
+        const result = await response.json();
+        showResult(result.feedback, result.isCorrect);
     } catch (error) {
-        showResult(error.message || 'Ошибка при проверке запроса', false);
+        showResult(error.message, false);
     }
 }
 
-function showResult(message, isSuccess) {
-    const container = document.getElementById('query-result');
-    const content = container.querySelector('.result-content');
-
-    content.innerHTML = `
-        <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-times-circle'}"></i>
-        ${message}
-    `;
-    container.className = `result-container ${isSuccess ? 'success' : 'error'}`;
-    container.style.display = 'block';
-}
-
-function createJoinEffect() {
-    const keywords = ['INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'CROSS JOIN'];
-    const colors = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'];
-
-    for (let i = 0; i < 4; i++) {
-        setTimeout(() => {
-            const effect = document.createElement('div');
-            effect.className = 'join-effect';
-            effect.textContent = keywords[Math.floor(Math.random() * keywords.length)];
-            effect.style.color = colors[Math.floor(Math.random() * colors.length)];
-            effect.style.left = `${Math.random() * 70 + 15}%`;
-            effect.style.top = `${Math.random() * 70 + 15}%`;
-
-            document.body.appendChild(effect);
-
-            setTimeout(() => {
-                effect.remove();
-            }, 1500);
-        }, i * 400);
-    }
+function getCsrfToken() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('XSRF-TOKEN='))
+        ?.split('=')[1] || '';
 }
 
 function getLessonIcon(topic) {
@@ -507,6 +550,8 @@ function showDatabaseSchema(schemaDefinition) {
 
 function showError(message) {
     const container = document.getElementById('lessons-container');
+    if (!container) return;
+
     container.innerHTML = `
         <div class="link-card" style="grid-column: 1 / -1; text-align: center;">
             <h3 class="link-title"><i class="fas fa-exclamation-triangle"></i> Ошибка</h3>
@@ -549,9 +594,13 @@ function setupEventListeners() {
         const helpModal = document.getElementById('help-modal');
         helpModal.style.display = 'block';
 
-        if (Math.random() > 0.5) {
-            showRandomEyeMessage();
+        if (isEyeAnimationEnabled) {
+            createJoinEffect();
+            if (Math.random() > 0.5) {
+                showRandomEyeMessage();
+            }
         }
+        isEyeAnimationEnabled = !isEyeAnimationEnabled;
     });
 
     document.querySelectorAll('.close-modal').forEach(btn => {
@@ -567,4 +616,99 @@ function setupEventListeners() {
             }
         });
     });
+}
+
+function showResult(message, isSuccess) {
+    const container = document.getElementById('query-result');
+    if (!container) return;
+
+    const content = container.querySelector('.result-content');
+    if (!content) return;
+
+    container.className = 'result-container';
+    container.classList.add(isSuccess ? 'success' : 'error');
+
+    if (isSuccess) {
+        content.innerHTML = `
+            <div class="success-animation">
+                <i class="fas fa-check-circle"></i>
+                <span>${message}</span>
+                <div class="success-effects"></div>
+            </div>
+            <button id="next-task-btn" class="next-task-button">
+                Следующее задание <i class="fas fa-arrow-right"></i>
+            </button>
+        `;
+
+        document.getElementById('next-task-btn').addEventListener('click', () => {
+            if (currentTaskIndex < tasks.length - 1) {
+                showTask(currentTaskIndex + 1);
+            } else {
+                showResult('🎉 Поздравляем! Вы завершили все задания урока', true);
+            }
+        });
+
+        setTimeout(() => {
+            if (currentTaskIndex < tasks.length - 1) {
+                showTask(currentTaskIndex + 1);
+            }
+        }, 3000);
+
+        createSuccessEffects();
+    } else {
+        content.innerHTML = `
+            <i class="fas fa-times-circle"></i>
+            <span>${message}</span>
+        `;
+    }
+
+    container.style.display = 'block';
+}
+
+function createSuccessEffects() {
+    const effectsContainer = document.querySelector('.success-effects');
+    if (!effectsContainer) return;
+
+    createJoinEffect();
+
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const effect = document.createElement('div');
+            effect.className = 'floating-symbol success-symbol';
+            effect.innerHTML = ['✓', '✔', '⭐', '🎉', '👏'][Math.floor(Math.random() * 5)];
+            effect.style.color = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'][Math.floor(Math.random() * 5)];
+            effect.style.left = `${Math.random() * 70 + 15}%`;
+            effect.style.top = `${Math.random() * 70 + 15}%`;
+            effect.style.fontSize = `${Math.random() * 1 + 1.5}rem`;
+            effectsContainer.appendChild(effect);
+
+            setTimeout(() => {
+                effect.remove();
+            }, 2000);
+        }, i * 200);
+    }
+}
+
+function createJoinEffect() {
+    const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'ORDER BY',
+        'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER'];
+    const colors = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'];
+
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const effect = document.createElement('div');
+            effect.className = 'join-effect';
+            effect.textContent = keywords[Math.floor(Math.random() * keywords.length)];
+            effect.style.color = colors[Math.floor(Math.random() * colors.length)];
+            effect.style.left = `${Math.random() * 70 + 15}%`;
+            effect.style.top = `${Math.random() * 70 + 15}%`;
+            effect.style.fontSize = `${Math.random() * 2 + 1.5}rem`;
+
+            document.body.appendChild(effect);
+
+            setTimeout(() => {
+                effect.remove();
+            }, 1500);
+        }, i * 200);
+    }
 }

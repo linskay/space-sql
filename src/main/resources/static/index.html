@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>SQL Космический Тренажер</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -69,6 +71,8 @@
                     <h3 class="query-title"><i class="fas fa-terminal"></i> Ваш SQL запрос:</h3>
                     <textarea id="query-input" class="query-input" placeholder="Введите ваш SQL запрос здесь..."></textarea>
                 </div>
+
+                <div class="query-hints" id="query-hints"></div>
 
                 <div id="query-result" class="result-container">
                     <div class="result-content"></div>

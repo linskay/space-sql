@@ -870,4 +870,114 @@ h1 {
     .mystic-eye:active {
         transform: scale(0.9);
     }
+
+    .query-hints {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--cosmic-blue);
+        border-radius: 5px;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+
+    .query-hint {
+        display: inline-block;
+        background: rgba(43, 0, 255, 0.2);
+        color: var(--sql-green);
+        padding: 0.2rem 0.5rem;
+        margin: 0.2rem;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+
+    .query-hint:hover {
+        background: rgba(157, 0, 255, 0.3);
+    }
+
+    .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.2rem;
+        background: var(--sql-green);
+        animation: blink-cursor 1s infinite;
+        vertical-align: middle;
+    }
+
+    @keyframes blink-cursor {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    /* Success Animation */
+    .success-animation {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+
+    .success-effects {
+        position: relative;
+        width: 100%;
+        height: 100px;
+        margin: 1rem 0;
+    }
+
+    .success-symbol {
+        position: absolute;
+        font-size: 2rem;
+        animation: float-up 2s ease-out forwards;
+        opacity: 0;
+        color: var(--sql-green);
+    }
+
+    .next-task-button {
+        background: linear-gradient(90deg, var(--neon-purple), var(--cosmic-blue));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 1rem;
+        box-shadow: 0 0 15px var(--neon-purple);
+    }
+
+    .next-task-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px var(--neon-purple);
+    }
+
+    @keyframes float-up {
+        0% {
+            transform: translateY(0) scale(0.5);
+            opacity: 0;
+        }
+        20% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100px) scale(1.5);
+            opacity: 0;
+        }
+    }
+
+    .result-container.success {
+        background: rgba(0, 255, 157, 0.15);
+        border: 1px solid var(--sql-green);
+        color: var(--sql-green);
+        animation: pulse-success 2s infinite;
+    }
+
+    @keyframes pulse-success {
+        0%, 100% {
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.8);
+        }
+    }
 }

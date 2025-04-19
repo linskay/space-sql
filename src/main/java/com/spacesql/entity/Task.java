@@ -36,6 +36,6 @@ public class Task {
     @Column(nullable = false)
     private Integer orderIndex;
 
-    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
     private TaskExampleData exampleData;
 }
