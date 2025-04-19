@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.19.xsd">
+
+    <changeSet id="1" author="space-sql">
+        <!-- Пример для задачи 1 -->
+        <insert tableName="task_example_data">
+            <column name="task_id" value="1"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Иван Иванов", "age": 25, "email": "ivan@example.com"},
+                    {"id": 2, "name": "Мария Петрова", "age": 30, "email": "maria@example.com"}
+                ]
+            }'/>
+        </insert>
+
+        <!-- Пример для задачи 2 -->
+        <insert tableName="task_example_data">
+            <column name="task_id" value="2"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"name": "Иван Иванов", "email": "ivan@example.com"},
+                    {"name": "Мария Петрова", "email": "maria@example.com"}
+                ]
+            }'/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

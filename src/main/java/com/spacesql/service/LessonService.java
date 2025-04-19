@@ -37,6 +37,7 @@ public class LessonService {
                 .collect(Collectors.toList());
     }
 
+    // Вспомогательные методы для DTO (оставляем как есть)
     private LessonDto convertToDtoWithoutTasks(Lesson lesson) {
         return LessonDto.builder()
                 .id(lesson.getId())

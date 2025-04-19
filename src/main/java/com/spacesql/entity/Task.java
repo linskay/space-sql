@@ -1,7 +1,10 @@
 package com.spacesql.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "task")
@@ -12,25 +15,27 @@ import lombok.*;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @Column(name = "schema_definition", columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String schemaDefinition;
 
-    @Column(name = "solution_query", columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String solutionQuery;
 
-    @Column(name = "order_index", nullable = false)
+    @Column(nullable = false)
     private Integer orderIndex;
+
+    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private TaskExampleData exampleData;
 }
