@@ -3,11 +3,52 @@ let tasks = [];
 let currentTaskIndex = 0;
 let schemaTimeout = null;
 
-document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener('DOMContentLoaded', async () => {
     createFloatingSymbols();
     await loadLessons();
     setupEventListeners();
 });
+
+async function checkUserAuth() {
+    try {
+        const response = await fetch('/api/users/me');
+        if (!response.ok) throw new Error('Пользователь не аутентифицирован');
+
+        const user = await response.json();
+        updateUIForLoggedInUser(user);
+    } catch (error) {
+        showLoginButton();
+    }
+}
+
+function updateUIForLoggedInUser(user) {
+    const authBlock = document.querySelector('.auth-block');
+    const githubLoginButton = authBlock.querySelector('.github-login');
+    const userInfoBlock = authBlock.querySelector('.user-info');
+    const userAvatar = userInfoBlock.querySelector('.user-avatar');
+    const userName = userInfoBlock.querySelector('.user-name');
+
+    githubLoginButton.style.display = 'none';
+    userInfoBlock.style.display = 'flex';
+
+    userAvatar.src = user.avatarUrl || 'https://via.placeholder.com/40';
+    userName.textContent = user.githubUsername;
+
+    const logoutButton = userInfoBlock.querySelector('.logout-button');
+    logoutButton.addEventListener('click', () => {
+        fetch('/logout', { method: 'POST' })
+            .then(() => location.reload());
+    });
+}
+
+function showLoginButton() {
+    const authBlock = document.querySelector('.auth-block');
+    const githubLoginButton = authBlock.querySelector('.github-login');
+    const userInfoBlock = authBlock.querySelector('.user-info');
+
+    githubLoginButton.style.display = 'flex';
+    userInfoBlock.style.display = 'none';
+}
 
 function createFloatingSymbols() {
     const symbols = ['@', '#', '$', '%', '&', '*', ';'];
@@ -415,4 +456,235 @@ function setupEventListeners() {
             checkQuery();
         }
     });
+
+    function generateExampleData(schemaDefinition, taskDescription) {
+        const tables = parseSchema(schemaDefinition);
+        if (tables.length === 0) return '<p>Нет данных для отображения</p>';
+
+        const table = tables[0];
+        const rows = [];
+        const fieldsToShow = detectRelevantFields(taskDescription, table.columns);
+
+        // Генерация данных на основе типа задания
+        if (taskDescription.includes('SELECT') || taskDescription.includes('выбор')) {
+            // Для SELECT запросов
+            for (let i = 1; i <= 5; i++) {
+                const row = {};
+                fieldsToShow.forEach(col => {
+                    row[col.name] = generateFieldValue(col, i);
+                });
+                rows.push(row);
+            }
+        } else if (taskDescription.includes('INSERT') || taskDescription.includes('добав')) {
+            // Для INSERT запросов
+            const row = {};
+            fieldsToShow.forEach(col => {
+                if (!col.primaryKey) {
+                    row[col.name] = generateFieldValue(col, 1);
+                }
+            });
+            rows.push(row);
+        } else if (taskDescription.includes('UPDATE') || taskDescription.includes('обнов')) {
+            // Для UPDATE запросов
+            const rowBefore = {};
+            const rowAfter = {};
+            fieldsToShow.forEach(col => {
+                rowBefore[col.name] = generateFieldValue(col, 1);
+                rowAfter[col.name] = col.name.includes('name') ? 'Новое имя' :
+                    col.type.includes('INT') ? Math.floor(Math.random() * 100) :
+                        'Обновлено';
+            });
+            rows.push(rowBefore, rowAfter);
+        }
+
+        // Генерация HTML таблицы
+        if (rows.length === 0) return '<p>Нет данных для отображения</p>';
+
+        let html = `<div class="scrollable-table"><table class="example-table"><thead><tr>`;
+        fieldsToShow.forEach(col => {
+            html += `<th>${col.name}</th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        rows.forEach((row, idx) => {
+            html += `<tr${idx % 2 === 0 ? ' class="even-row"' : ''}>`;
+            fieldsToShow.forEach(col => {
+                html += `<td>${row[col.name] ?? 'NULL'}</td>`;
+            });
+            html += `</tr>`;
+        });
+
+        html += `</tbody></table></div>`;
+        return html;
+    }
+
+    function detectRelevantFields(description, columns) {
+        // Определяем какие поля упоминаются в задании
+        const mentionedFields = [];
+        columns.forEach(col => {
+            if (description.toLowerCase().includes(col.name.toLowerCase())) {
+                mentionedFields.push(col);
+            }
+        });
+
+        // Если упомянутых полей нет, берем первые 3-5 полей
+        return mentionedFields.length > 0 ? mentionedFields : columns.slice(0, Math.min(5, columns.length));
+    }
+
+    function generateFieldValue(column, index) {
+        const colName = column.name.toLowerCase();
+        const colType = column.type.toLowerCase();
+
+        // Генерация значений на основе имени и типа поля
+        if (colName.includes('id')) {
+            return index;
+        }
+
+        if (colName.includes('name')) {
+            const names = ['Иван', 'Мария', 'Алексей', 'Елена', 'Дмитрий', 'Анна', 'Сергей'];
+            return names[index % names.length];
+        }
+
+        if (colName.includes('email')) {
+            return `user${index}@example.com`;
+        }
+
+        if (colName.includes('age')) {
+            return 20 + index * 5;
+        }
+
+        if (colName.includes('date')) {
+            return new Date(2023, index % 12, (index % 28) + 1).toISOString().split('T')[0];
+        }
+
+        if (colType.includes('int')) {
+            return index * 10;
+        }
+
+        if (colType.includes('varchar') || colType.includes('text')) {
+            const texts = ['Текст', 'Данные', 'Значение', 'Информация', 'Запись'];
+            return `${texts[index % texts.length]} ${index}`;
+        }
+
+        if (colType.includes('bool')) {
+            return index % 2 === 0 ? 'true' : 'false';
+        }
+
+        return `Значение ${index}`;
+    }
+
+    function showTask(taskIndex) {
+        if (taskIndex < 0 || taskIndex >= tasks.length) return;
+
+        currentTaskIndex = taskIndex;
+        const task = tasks[taskIndex];
+
+        document.getElementById('lesson-title').innerHTML = `
+        <i class="fas ${getLessonIcon(currentLesson.topic)}"></i> ${currentLesson.title}
+    `;
+        document.getElementById('lesson-description').textContent = currentLesson.description;
+
+        const taskContainer = document.querySelector('.task-container');
+        taskContainer.querySelector('.task-title').textContent = task.title || 'Задание';
+        taskContainer.querySelector('.task-counter').textContent = `Задание ${currentTaskIndex + 1} из ${tasks.length}`;
+        taskContainer.querySelector('.task-description').textContent = task.description || 'Описание отсутствует';
+        taskContainer.querySelector('.schema-definition').textContent = task.schemaDefinition || 'Схема не предоставлена';
+
+        // Добавляем пример данных
+        const exampleDataContent = taskContainer.querySelector('.example-data-content');
+        exampleDataContent.innerHTML = generateExampleData(task.schemaDefinition);
+
+        document.getElementById('lessons-container').style.display = 'none';
+        document.getElementById('lesson-details').style.display = 'block';
+        document.getElementById('query-result').style.display = 'none';
+        document.getElementById('query-input').value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        createFloatingSymbols();
+        await loadLessons();
+
+        // Проверяем авторизацию пользователя
+        fetch('/api/users/me')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Пользователь не авторизован');
+                }
+            })
+            .then(user => {
+                // Если пользователь авторизован, показываем его данные
+                const authBlock = document.querySelector('.auth-block');
+                const githubLoginButton = authBlock.querySelector('.github-login');
+                const userInfoBlock = authBlock.querySelector('.user-info');
+                const userAvatar = userInfoBlock.querySelector('.user-avatar');
+                const userName = userInfoBlock.querySelector('.user-name');
+
+                githubLoginButton.style.display = 'none';
+                userInfoBlock.style.display = 'flex';
+
+                userAvatar.src = user.avatarUrl || 'https://via.placeholder.com/40'; // Заглушка, если аватар отсутствует
+                userName.textContent = user.githubUsername;
+
+                // Добавляем обработчик для кнопки "Выйти"
+                const logoutButton = userInfoBlock.querySelector('.logout-button');
+                logoutButton.addEventListener('click', () => {
+                    fetch('/logout', { method: 'POST' }) // Эндпоинт для выхода
+                        .then(() => {
+                            location.reload(); // Перезагружаем страницу после выхода
+                        });
+                });
+            })
+            .catch(() => {
+                // Если пользователь не авторизован, показываем кнопку входа
+                const authBlock = document.querySelector('.auth-block');
+                const githubLoginButton = authBlock.querySelector('.github-login');
+                const userInfoBlock = authBlock.querySelector('.user-info');
+
+                githubLoginButton.style.display = 'flex';
+                userInfoBlock.style.display = 'none';
+            });
+
+        setupEventListeners();
+    });
+
+    async function saveUserToDatabase(user) {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    githubUsername: user.githubUsername,
+                    avatarUrl: user.avatarUrl
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка сохранения пользователя');
+            }
+
+            const savedUser = await response.json();
+            console.log('Пользователь сохранен:', savedUser);
+            return savedUser;
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showError('Не удалось сохранить пользователя');
+        }
+    }
+
+    async function loadCurrentUser() {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/me');
+            if (!response.ok) throw new Error('Пользователь не авторизован');
+
+            const user = await response.json();
+            updateUIWithUser(user);
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showLoginButton();
+        }
+    }
 }

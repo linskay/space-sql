@@ -14,6 +14,21 @@
     <header>
         <h1>SQL Космический Тренажер</h1>
         <p class="subtitle">Изучайте SQL, покоряя цифровую вселенную</p>
+
+        <!-- Панель авторизации -->
+        <div class="auth-panel">
+            <!-- Отображается, если пользователь не авторизован -->
+            <a href="/oauth2/authorization/github" class="auth-button github-login">
+                <i class="fab fa-github"></i> Войти через GitHub
+            </a>
+
+            <!-- Отображается, если пользователь авторизован -->
+            <div class="user-info" style="display: none;">
+                <img src="" alt="Avatar" class="user-avatar">
+                <span class="user-name"></span>
+                <button class="logout-button">Выйти</button>
+            </div>
+        </div>
     </header>
 
     <div class="links-container" id="lessons-container">
@@ -29,36 +44,43 @@
             <p id="lesson-description" class="lesson-description"></p>
         </div>
 
-        <div id="task-container" class="task-container">
-            <div class="task-header">
-                <h3 class="task-title"></h3>
-                <span class="task-counter"></span>
-            </div>
-            <div class="task-content">
-                <div class="task-description"></div>
-                <div class="task-schema">
-                    <h4><i class="fas fa-database"></i> Схема базы данных:</h4>
-                    <pre class="schema-definition"></pre>
+        <div class="lesson-content-wrapper">
+            <div class="main-task-content">
+                <div id="task-container" class="task-container">
+                    <div class="task-header">
+                        <h3 class="task-title"></h3>
+                        <span class="task-counter"></span>
+                    </div>
+                    <div class="task-description"></div>
+                    <div class="task-schema">
+                        <h4><i class="fas fa-database"></i> Схема базы данных:</h4>
+                        <pre class="schema-definition"></pre>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="show-schema" class="schema-button">
+                        <i class="fas fa-database"></i> Показать схему БД
+                    </button>
+                    <button id="query-submit" class="submit-button">
+                        <i class="fas fa-paper-plane"></i> Проверить запрос
+                    </button>
+                </div>
+
+                <div class="query-section">
+                    <h3 class="query-title"><i class="fas fa-terminal"></i> Ваш SQL запрос:</h3>
+                    <textarea id="query-input" class="query-input" placeholder="Введите ваш SQL запрос здесь..."></textarea>
+                </div>
+
+                <div id="query-result" class="result-container">
+                    <div class="result-content"></div>
                 </div>
             </div>
-        </div>
 
-        <div class="action-buttons">
-            <button id="show-schema" class="schema-button">
-                <i class="fas fa-database"></i> Показать схему БД
-            </button>
-            <button id="query-submit" class="submit-button">
-                <i class="fas fa-paper-plane"></i> Проверить запрос
-            </button>
-        </div>
-
-        <div class="query-section">
-            <h3 class="query-title"><i class="fas fa-terminal"></i> Ваш SQL запрос:</h3>
-            <textarea id="query-input" class="query-input" placeholder="Введите ваш SQL запрос здесь..."></textarea>
-        </div>
-
-        <div id="query-result" class="result-container">
-            <div class="result-content"></div>
+            <div class="data-example-sidebar">
+                <h4><i class="fas fa-table"></i> Пример данных:</h4>
+                <div class="example-data-content"></div>
+            </div>
         </div>
     </div>
 

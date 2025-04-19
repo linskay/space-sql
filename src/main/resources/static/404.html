@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Cosmic Journey</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Космическая тема */
+    body {
+      background-color: #0a0a1a;
+      overflow: hidden;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Звезды */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .star {
+      position: absolute;
+      background-color: white;
+      border-radius: 50%;
+      animation: twinkle 1s infinite alternate;
+    }
+
+    /* Неоновые тексты */
+    .neon-text {
+      text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00;
+    }
+
+    /* Игровое поле */
+    #game-container {
+      display: none;
+      position: relative;
+      width: 600px;
+      height: 400px;
+      margin: 50px auto;
+      background-color: rgba(13, 2, 33, 0.7);
+      border: 2px solid #00ff00;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    #dino {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      bottom: 50px;
+      left: 50px;
+      background-image: url('/static/images/dinosaur.png'); /* Убедитесь, что путь верный */
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+    .obstacle {
+      position: absolute;
+      width: 80px;
+      height: 50px;
+      bottom: 50px;
+      background-color: #9d00ff;
+      color: #f8f8ff;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      text-align: center;
+      line-height: 50px;
+    }
+
+    /* Модальное окно */
+    #result-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: rgba(10, 10, 26, 0.9);
+      border: 2px solid #00ff00;
+      box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+      color: #00ff00;
+      font-family: monospace;
+      text-align: center;
+      z-index: 1001;
+      cursor: pointer;
+    }
+
+    #score {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #00ff00;
+      font-family: monospace;
+      font-weight: bold;
+      text-shadow: 0 0 5px #00ff00;
+    }
+  </style>
+</head>
+<body>
+<!-- Звездное небо -->
+<div class="stars"></div>
+
+<!-- Страница 404 -->
+<div class="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center">
+  <h1 class="text-6xl font-bold neon-text">404</h1>
+  <p class="text-xl mt-4 text-gray-300">Мы потерялись в космосе, но вы можете вернуться!</p>
+  <button id="startGameButton" class="mt-8 px-6 py-3 bg-green-500 text-black font-bold rounded-full hover:bg-green-700 focus:outline-none focus:shadow-outline-green active:bg-green-800">Запустить Cosmic Journey</button>
+  <a href="/" class="inline-block mt-4 px-4 py-2 bg-transparent border border-green-500 text-green-500 font-bold rounded-full hover:bg-green-500 hover:text-black focus:outline-none focus:shadow-outline-green active:bg-green-800">Вернуться на главную</a>
+</div>
+
+<!-- Игровое поле -->
+<div id="game-container">
+  <div id="score">Счет: 0</div>
+  <div id="dino"></div>
+</div>
+
+<!-- Модальное окно -->
+<div id="result-modal" class="neon-text">
+  <h2>Cosmic Journey Завершена!</h2>
+  <p id="final-score">Ваш счет: 0</p>
+</div>
+
+<script>
+  const stars = document.querySelector('.stars');
+  const numStars = 100;
+
+  // Создаем звезды
+  for (let i = 0; i < numStars; i++) {
+    let star = document.createElement('div');
+    star.classList.add('star');
+    star.style.width = `${Math.random() * 3}px`;
+    star.style.height = star.style.width;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.left = `${Math.random() * 100}%`;
+    stars.appendChild(star);
+  }
+
+  // Логика игры
+  const gameContainer = document.getElementById('game-container');
+  const dino = document.getElementById('dino');
+  const resultModal = document.getElementById('result-modal');
+
+  let scoreDisplay = document.getElementById('score');
+  let finalScoreDisplay = document.getElementById('final-score');
+  let score = 0;
+
+  let isJumping = false;
+  let gravity = 0.9;
+  let position = 0;
+  let obstacles = [];
+  let gameSpeed = 4;
+  let obstacleInterval = 1500;
+  let gameInterval;
+
+  function generateObstacle() {
+    const obstacle = document.createElement('div');
+    obstacle.classList.add('obstacle');
+    obstacle.style.left = '600px';
+
+    const obstacleTexts = ["SELECT", "FROM", "WHERE", "JOIN", "SQL"];
+    obstacle.textContent = obstacleTexts[Math.floor(Math.random() * obstacleTexts.length)];
+
+    let obstaclePosition = 600;
+    let randomHeight = Math.random() * 50;
+    obstacle.style.bottom = `${randomHeight + 50}px`;
+    gameContainer.appendChild(obstacle);
+
+    obstacles.push(obstacle);
+
+    function moveObstacle() {
+      obstaclePosition -= gameSpeed;
+      obstacle.style.left = `${obstaclePosition}px`;
+
+      if (obstaclePosition < -80) {
+        clearInterval(obstacle.moveInterval);
+        gameContainer.removeChild(obstacle);
+        obstacles = obstacles.filter(o => o !== obstacle);
+      } else if (obstaclePosition > 0 && obstaclePosition < 60 && position < 20) {
+        gameOver();
+      }
+    }
+
+    obstacle.moveInterval = setInterval(moveObstacle, 20);
+  }
+
+  function control(e) {
+    if (e.keyCode === 32) {
+      jump();
+    }
+  }
+
+  function jump() {
+    if (isJumping) return;
+    isJumping = true;
+
+    let upInterval = setInterval(() => {
+      if (position >= 100) {
+        clearInterval(upInterval);
+        let downInterval = setInterval(() => {
+          if (position <= 0) {
+            clearInterval(downInterval);
+            isJumping = false;
+          }
+          position -= 5;
+          dino.style.bottom = `${position}px`;
+        }, 20);
+      }
+      position += 20;
+      dino.style.bottom = `${position}px`;
+    }, 20);
+  }
+
+  function updateScore() {
+    score++;
+    scoreDisplay.textContent = `Счет: ${score}`;
+  }
+
+  function startGame() {
+    gameContainer.style.display = 'block';
+    document.querySelector('.absolute').style.display = 'none';
+
+    position = 0;
+    score = 0;
+    obstacles = [];
+    gameSpeed = 4;
+    isJumping = false;
+    scoreDisplay.textContent = `Счет: ${score}`;
+    dino.style.bottom = `${position}px`;
+    document.addEventListener('keydown', control);
+
+    gameInterval = setInterval(generateObstacle, obstacleInterval);
+    scoreInterval = setInterval(updateScore, 500);
+  }
+
+  function gameOver() {
+    clearInterval(gameInterval);
+    clearInterval(scoreInterval);
+    document.removeEventListener('keydown', control);
+
+    obstacles.forEach(obstacle => {
+      clearInterval(obstacle.moveInterval);
+      gameContainer.removeChild(obstacle);
+    });
+
+    finalScoreDisplay.textContent = `Ваш счет: ${score}`;
+    resultModal.style.display = 'block';
+
+    setTimeout(() => {
+      resultModal.style.display = 'none';
+      endGame();
+    }, 3000);
+
+    resultModal.onclick = () => {
+      resultModal.style.display = 'none';
+      endGame();
+    };
+  }
+
+  function endGame() {
+    gameContainer.style.display = 'none';
+    document.querySelector('.absolute').style.display = 'flex';
+    document.querySelector('.absolute').style.flexDirection = 'column';
+    resultModal.onclick = null;
+  }
+
+  document.getElementById('startGameButton').addEventListener('click', startGame);
+</script>
+</body>
+</html>

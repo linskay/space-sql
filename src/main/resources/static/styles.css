@@ -628,3 +628,237 @@ h1 {
     margin-top: 1.5rem;
     font-size: 1.2rem;
 }
+/* Добавленные стили для примера данных */
+.task-data-example {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1.2rem;
+    border-radius: 8px;
+    font-family: 'Roboto Mono', monospace;
+    color: var(--starlight);
+    border-left: 3px solid var(--cosmic-blue);
+    margin-bottom: 1.5rem;
+}
+
+.example-data-content {
+    overflow-x: auto;
+}
+
+.example-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.example-table th, .example-table td {
+    border: 1px solid var(--cosmic-blue);
+    padding: 0.8rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.example-table th {
+    background-color: rgba(43, 0, 255, 0.2);
+    color: var(--sql-green);
+}
+
+.example-table tr:nth-child(even) {
+    background-color: rgba(13, 2, 33, 0.5);
+}
+
+/* Анимации для кнопок */
+.link-url, .back-button, .submit-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.link-url:hover, .back-button:hover, .submit-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 20px var(--neon-purple);
+}
+
+.schema-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px var(--mystic-purple);
+    background: rgba(106, 0, 244, 0.5);
+}
+
+
+/* Стили для основного контейнера */
+.lesson-content-wrapper {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.main-task-content {
+    flex: 3;
+}
+
+.data-example-sidebar {
+    flex: 2;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--cosmic-blue);
+    border-radius: 10px;
+    padding: 1.5rem;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.data-example-sidebar h4 {
+    color: var(--sql-green);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .lesson-content-wrapper {
+        flex-direction: column;
+    }
+
+    .data-example-sidebar {
+        position: static;
+    }
+}
+
+.scrollable-table {
+    overflow-x: auto;
+    max-width: 100%;
+    margin-top: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(157, 0, 255, 0.3);
+}
+
+.example-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.example-table th {
+    background: rgba(43, 0, 255, 0.2);
+    color: var(--sql-green);
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid var(--cosmic-blue);
+    white-space: nowrap;
+}
+
+.example-table td {
+    padding: 0.75rem;
+    border: 1px solid var(--cosmic-blue);
+    white-space: nowrap;
+}
+
+.example-table tr.even-row {
+    background: rgba(13, 2, 33, 0.5);
+}
+
+.example-table tr:hover {
+    background: rgba(157, 0, 255, 0.1);
+}
+
+/* Панель авторизации */
+.auth-panel {
+    position: absolute;
+    top: -1.5rem; /* Выносим кнопку выше заголовка */
+    right: 1rem; /* Отступ справа */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 10; /* Убедитесь, что панель выше других элементов */
+}
+
+/* Кнопка "Войти через GitHub" */
+.github-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(90deg, var(--neon-purple), var(--sql-green));
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 0.85rem; /* Уменьшаем размер шрифта */
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--neon-purple);
+    transition: all 0.3s ease;
+}
+
+.github-login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px var(--neon-purple);
+}
+
+.github-login i {
+    font-size: 1.2rem;
+}
+
+/* Информация о пользователе */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--sql-green);
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.user-name {
+    color: var(--sql-green);
+    font-weight: bold;
+    font-size: 1rem;
+    text-shadow: 0 0 5px var(--sql-green);
+}
+
+.logout-button {
+    background: rgba(106, 0, 244, 0.3);
+    border: 1px solid var(--mystic-purple);
+    color: var(--starlight);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+    background: rgba(106, 0, 244, 0.5);
+    box-shadow: 0 0 10px var(--mystic-purple);
+}
+
+.github-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(90deg, var(--neon-purple), var(--sql-green));
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--neon-purple);
+    transition: all 0.3s ease;
+}
+
+.github-login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px var(--neon-purple);
+}
+
+.github-login i {
+    font-size: 1.2rem;
+}
