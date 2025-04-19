@@ -1,17 +1,14 @@
-// Глобальные переменные состояния
 let currentLesson = null;
 let tasks = [];
 let currentTaskIndex = 0;
 let schemaTimeout = null;
 
-// Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     createFloatingSymbols();
     await loadLessons();
     setupEventListeners();
 });
 
-// Создаем плавающие символы
 function createFloatingSymbols() {
     const symbols = ['@', '#', '$', '%', '&', '*', ';'];
     const container = document.body;
@@ -21,7 +18,6 @@ function createFloatingSymbols() {
         symbol.className = 'floating-symbol';
         symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-        // Позиционируем случайным образом
         symbol.style.left = `${Math.random() * 90 + 5}%`;
         symbol.style.top = `${Math.random() * 90 + 5}%`;
         symbol.style.animationDelay = `${Math.random() * 5}s`;
@@ -31,7 +27,6 @@ function createFloatingSymbols() {
     }
 }
 
-// Создаем эффект JOIN при успешной проверке
 function createJoinEffect() {
     const keywords = ['INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'CROSS JOIN'];
     const colors = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'];
@@ -47,7 +42,6 @@ function createJoinEffect() {
 
             document.body.appendChild(effect);
 
-            // Удаляем эффект после анимации
             setTimeout(() => {
                 effect.remove();
             }, 1500);
@@ -55,7 +49,28 @@ function createJoinEffect() {
     }
 }
 
-// Загрузка уроков с сервера
+function createSqlKeywordsEffect() {
+    const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'ORDER BY', 'INSERT', 'UPDATE', 'DELETE'];
+    const colors = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'];
+
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const effect = document.createElement('div');
+            effect.className = 'join-effect';
+            effect.textContent = keywords[Math.floor(Math.random() * keywords.length)];
+            effect.style.color = colors[Math.floor(Math.random() * colors.length)];
+            effect.style.left = `${Math.random() * 70 + 15}%`;
+            effect.style.top = `${Math.random() * 70 + 15}%`;
+
+            document.body.appendChild(effect);
+
+            setTimeout(() => {
+                effect.remove();
+            }, 1500);
+        }, i * 200);
+    }
+}
+
 async function loadLessons() {
     try {
         const response = await fetch('http://localhost:8080/api/lessons');
@@ -69,7 +84,6 @@ async function loadLessons() {
     }
 }
 
-// Отображение списка уроков
 function displayLessons(lessons) {
     const container = document.getElementById('lessons-container');
     container.innerHTML = '';
@@ -139,7 +153,6 @@ function displayLessons(lessons) {
     });
 }
 
-// Загрузка деталей урока и заданий
 async function loadLessonDetails(lessonId) {
     try {
         const response = await fetch(`http://localhost:8080/api/lessons/${lessonId}`);
@@ -147,7 +160,6 @@ async function loadLessonDetails(lessonId) {
 
         currentLesson = await response.json();
 
-        // Загружаем задания для этого урока
         const tasksResponse = await fetch(`http://localhost:8080/api/lessons/${lessonId}/tasks`);
         if (!tasksResponse.ok) throw new Error('Ошибка загрузки заданий');
 
@@ -164,42 +176,35 @@ async function loadLessonDetails(lessonId) {
     }
 }
 
-// Отображение задания
 function showTask(taskIndex) {
     if (taskIndex < 0 || taskIndex >= tasks.length) return;
 
     currentTaskIndex = taskIndex;
     const task = tasks[taskIndex];
 
-    // Обновляем заголовок урока
     document.getElementById('lesson-title').innerHTML = `
         <i class="fas ${getLessonIcon(currentLesson.topic)}"></i> ${currentLesson.title}
     `;
     document.getElementById('lesson-description').textContent = currentLesson.description;
 
-    // Обновляем информацию о задании
     const taskContainer = document.querySelector('.task-container');
     taskContainer.querySelector('.task-title').textContent = task.title || 'Задание';
     taskContainer.querySelector('.task-counter').textContent = `Задание ${currentTaskIndex + 1} из ${tasks.length}`;
     taskContainer.querySelector('.task-description').textContent = task.description || 'Описание отсутствует';
     taskContainer.querySelector('.schema-definition').textContent = task.schemaDefinition || 'Схема не предоставлена';
 
-    // Показываем раздел с уроками
     document.getElementById('lessons-container').style.display = 'none';
     document.getElementById('lesson-details').style.display = 'block';
     document.getElementById('query-result').style.display = 'none';
     document.getElementById('query-input').value = '';
 }
 
-// Показать схему БД в модальном окне
 function showDatabaseSchema(schemaDefinition) {
     const modal = document.getElementById('schema-modal');
     const schemaContent = document.getElementById('schema-content');
 
-    // Парсим схему БД
     const tables = parseSchema(schemaDefinition);
 
-    // Генерируем HTML для таблиц
     let html = '';
     tables.forEach(table => {
         html += `
@@ -230,14 +235,22 @@ function showDatabaseSchema(schemaDefinition) {
     schemaContent.innerHTML = html;
     modal.style.display = 'block';
 
-    // Автоматическое закрытие через 3 секунды
     clearTimeout(schemaTimeout);
     schemaTimeout = setTimeout(() => {
         modal.style.display = 'none';
     }, 3000);
 }
 
-// Парсим схему БД из CREATE TABLE
+function showHelpModal() {
+    const modal = document.getElementById('help-modal');
+    modal.style.display = 'block';
+    createSqlKeywordsEffect();
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
 function parseSchema(schemaDefinition) {
     const tables = [];
     const tableRegex = /CREATE TABLE (\w+)\s*\(([^)]+)\)/g;
@@ -273,7 +286,6 @@ function parseSchema(schemaDefinition) {
     return tables;
 }
 
-// Проверка SQL запроса
 async function checkQuery() {
     const task = tasks[currentTaskIndex];
     if (!task) {
@@ -312,7 +324,6 @@ async function checkQuery() {
     }
 }
 
-// Показать результат
 function showResult(message, isSuccess) {
     const resultContainer = document.getElementById('query-result');
     const resultContent = resultContainer.querySelector('.result-content');
@@ -325,7 +336,6 @@ function showResult(message, isSuccess) {
     resultContainer.style.display = 'block';
 }
 
-// Показать ошибку
 function showError(message) {
     const container = document.getElementById('lessons-container');
     container.innerHTML = `
@@ -362,48 +372,45 @@ function getLessonIcon(topic) {
     return icons.default;
 }
 
-// Настройка обработчиков событий
 function setupEventListeners() {
-    // Нажатие на кнопку "Начать урок"
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (e.target.classList.contains('start-lesson')) {
             const lessonId = e.target.getAttribute('data-id');
             loadLessonDetails(lessonId);
         }
     });
 
-    // Кнопка "Назад"
-    document.getElementById('back-button').addEventListener('click', function() {
+    document.getElementById('back-button').addEventListener('click', function () {
         document.getElementById('lesson-details').style.display = 'none';
         document.getElementById('lessons-container').style.display = 'grid';
     });
 
-    // Кнопка "Показать схему БД"
-    document.getElementById('show-schema').addEventListener('click', function() {
+    document.getElementById('show-schema').addEventListener('click', function () {
         if (tasks[currentTaskIndex]) {
             showDatabaseSchema(tasks[currentTaskIndex].schemaDefinition);
         }
     });
 
-    // Закрытие модального окна
-    document.querySelector('.close-modal').addEventListener('click', function() {
-        document.getElementById('schema-modal').style.display = 'none';
-        clearTimeout(schemaTimeout);
+    document.getElementById('mystic-eye').addEventListener('click', showHelpModal);
+
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const modal = this.closest('.modal');
+            modal.style.display = 'none';
+        });
     });
 
-    // Клик по фону модального окна
-    document.getElementById('schema-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.style.display = 'none';
-            clearTimeout(schemaTimeout);
-        }
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function (e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
     });
 
-    // Кнопка "Проверить запрос"
     document.getElementById('query-submit').addEventListener('click', checkQuery);
 
-    // Отправка запроса по Ctrl+Enter
-    document.getElementById('query-input').addEventListener('keydown', function(e) {
+    document.getElementById('query-input').addEventListener('keydown', function (e) {
         if (e.ctrlKey && e.key === 'Enter') {
             checkQuery();
         }

@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Космический Тренажер</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Press+Start+2P&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,7 +17,6 @@
     </header>
 
     <div class="links-container" id="lessons-container">
-        <!-- Уроки будут загружены через JavaScript -->
     </div>
 
     <div class="lesson-container" id="lesson-details">
@@ -71,8 +71,29 @@
     </div>
 
     <footer class="footer">
-        <p class="footer-text">SQL запросы к звездам · Тренажер 2025 · Команда <span class="team-name">No PHP - No Problems</span></p>
+        <p class="footer-text">SQL запросы к звездам · Тренажер 2025 · Команда <span class="team-name">No PHP - No Problems</span>
+        </p>
     </footer>
+</div>
+
+<div id="help-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3 class="modal-title"><i class="fas fa-question-circle"></i> Как пользоваться тренажером</h3>
+        <div class="help-content">
+            <p>1. Открываем урок из списка</p>
+            <p>2. Читаем задание и схему базы данных</p>
+            <p>3. Пишем SQL запрос в поле ввода</p>
+            <p>4. Проверяем запрос кнопкой или Ctrl+Enter</p>
+            <p>5. Используем подсказку (схему БД) при необходимости</p>
+            <p>6. Переходим к следующему заданию</p>
+            <p class="highlight">Все очень просто! Покоряйте SQL-вселенную! 🚀</p>
+        </div>
+    </div>
+</div>
+
+<div class="mystic-eye" id="mystic-eye">
+    <div class="eye-pupil"></div>
 </div>
 
 <script src="script.js"></script>
