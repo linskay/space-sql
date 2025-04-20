@@ -2,6 +2,7 @@ let currentLesson = null;
 let tasks = [];
 let currentTaskIndex = 0;
 let schemaTimeout = null;
+let isEyeAnimationEnabled = true;
 
 const motivationalMessages = [
     "SELECT * FROM success;",
@@ -26,14 +27,25 @@ const motivationalMessages = [
     "Функция успеха() возвращает true!"
 ];
 
-document.addEventListener('DOMContentLoaded', async () => {
+const SQL_KEYWORDS = [
+    'SELECT', 'FROM', 'WHERE', 'JOIN', 'INNER JOIN', 'LEFT JOIN',
+    'RIGHT JOIN', 'GROUP BY', 'ORDER BY', 'HAVING', 'INSERT INTO',
+    'UPDATE', 'DELETE FROM', 'CREATE TABLE', 'ALTER TABLE', 'DROP TABLE',
+    'AND', 'OR', 'NOT', 'IN', 'BETWEEN', 'LIKE', 'IS NULL', 'COUNT',
+    'SUM', 'AVG', 'MIN', 'MAX', 'DISTINCT', 'AS', 'LIMIT', 'OFFSET'
+];
+
+// Основная функция инициализации
+async function initializeApp() {
     createFloatingSymbols();
     await loadLessons();
     setupEventListeners();
-    checkAuthStatus();
+    await checkAuthStatus();
     startMysticEyeMessages();
-});
+    setupQueryInput();
+}
 
+// Функции аутентификации
 async function checkAuthStatus() {
     try {
         const response = await fetch('/api/auth/status');
@@ -63,59 +75,7 @@ function updateAuthUI(user) {
     }
 }
 
-function createFloatingSymbols() {
-    const symbols = ['@', '#', '$', '%', '&', '*', ';', 'SELECT', 'FROM', 'WHERE', 'JOIN'];
-    const container = document.body;
-
-    for (let i = 0; i < 15; i++) {
-        const symbol = document.createElement('div');
-        symbol.className = 'floating-symbol';
-
-        if (Math.random() < 0.3) {
-            const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'ORDER BY'];
-            symbol.textContent = keywords[Math.floor(Math.random() * keywords.length)];
-            symbol.classList.add('sql-keyword');
-        } else {
-            symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        }
-
-        symbol.style.left = `${Math.random() * 90 + 5}%`;
-        symbol.style.top = `${Math.random() * 90 + 5}%`;
-        symbol.style.animationDelay = `${Math.random() * 5}s`;
-        symbol.style.animationDuration = `${Math.random() * 6 + 4}s`;
-
-        container.appendChild(symbol);
-    }
-}
-
-function startMysticEyeMessages() {
-    setTimeout(showRandomEyeMessage, 10000);
-    setInterval(() => {
-        if (Math.random() > 0.3) showRandomEyeMessage();
-    }, 30000);
-}
-
-function showRandomEyeMessage() {
-    const message = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
-    showEyeMessage(message);
-}
-
-function showEyeMessage(message) {
-    const eye = document.getElementById('mystic-eye');
-    const messageElement = document.createElement('div');
-    messageElement.className = 'eye-message';
-    messageElement.textContent = message;
-
-    const oldMessage = eye.querySelector('.eye-message');
-    if (oldMessage) oldMessage.remove();
-
-    eye.appendChild(messageElement);
-
-    setTimeout(() => {
-        messageElement.remove();
-    }, 6000);
-}
-
+// Функции работы с уроками
 async function loadLessons() {
     try {
         const response = await fetch('/api/lessons');
@@ -130,6 +90,8 @@ async function loadLessons() {
 
 function displayLessons(lessons) {
     const container = document.getElementById('lessons-container');
+    if (!container) return;
+
     container.innerHTML = '';
 
     const lessonIcons = {
@@ -216,6 +178,7 @@ async function loadLessonDetails(lessonId) {
     }
 }
 
+// Функции работы с заданиями
 async function showTask(taskIndex) {
     if (taskIndex < 0 || taskIndex >= tasks.length) return;
 
@@ -254,6 +217,7 @@ async function showTask(taskIndex) {
 
 function displayExampleData(exampleData) {
     const container = document.querySelector('.example-data-content');
+    if (!container) return;
 
     if (exampleData && exampleData.rows && exampleData.rows.length > 0) {
         const columns = Object.keys(exampleData.rows[0]);
@@ -281,6 +245,7 @@ function displayExampleData(exampleData) {
 
 function displayGeneratedExampleData(schemaDefinition, description) {
     const container = document.querySelector('.example-data-content');
+    if (!container) return;
     container.innerHTML = generateExampleData(schemaDefinition, description);
 }
 
@@ -392,59 +357,99 @@ async function checkQuery() {
         const response = await fetch('/api/tasks/check', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': getCsrfToken()
             },
+            credentials: 'include',
             body: JSON.stringify({
                 taskId: task.id,
-                query: query
+                userQuery: query
             })
         });
 
         const result = await response.json();
+
         if (!response.ok) {
-            throw new Error(result.message || 'Ошибка сервера');
+            showResult(result.feedback || 'Ошибка сервера', false, result);
+            return;
         }
 
-        showResult(result.message, result.correct);
-        if (result.correct) {
-            createJoinEffect();
+        const isCorrect = result.correct || result.isCorrect || false;
+        const feedback = result.feedback || result.message || (isCorrect ? 'Запрос верный!' : 'Запрос неверный');
+        const expectedQuery = result.expectedQuery || null;
+
+        showResult(feedback, isCorrect, {
+            expectedQuery: expectedQuery
+        });
+
+        if (isCorrect) {
+            document.getElementById('query-input').value = '';
         }
     } catch (error) {
-        showResult(error.message || 'Ошибка при проверке запроса', false);
+        console.error('Ошибка:', error);
+        showResult('Произошла ошибка при проверке запроса', false);
     }
 }
 
-function showResult(message, isSuccess) {
-    const container = document.getElementById('query-result');
-    const content = container.querySelector('.result-content');
-
-    content.innerHTML = `
-        <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-times-circle'}"></i>
-        ${message}
-    `;
-    container.className = `result-container ${isSuccess ? 'success' : 'error'}`;
-    container.style.display = 'block';
+function getCsrfToken() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('XSRF-TOKEN='))
+        ?.split('=')[1] || '';
 }
 
-function createJoinEffect() {
-    const keywords = ['INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'CROSS JOIN'];
-    const colors = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'];
+function showResult(message, isSuccess, resultData = {}) {
+    const container = document.getElementById('query-result');
+    if (!container) return;
 
-    for (let i = 0; i < 4; i++) {
-        setTimeout(() => {
-            const effect = document.createElement('div');
-            effect.className = 'join-effect';
-            effect.textContent = keywords[Math.floor(Math.random() * keywords.length)];
-            effect.style.color = colors[Math.floor(Math.random() * colors.length)];
-            effect.style.left = `${Math.random() * 70 + 15}%`;
-            effect.style.top = `${Math.random() * 70 + 15}%`;
+    container.className = 'result-container';
+    container.classList.add(isSuccess ? 'success' : 'error');
+    container.style.display = 'block';
 
-            document.body.appendChild(effect);
+    let contentHTML = `
+        <div class="result-content">
+            <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+            <div class="result-message">${message}</div>
+    `;
 
-            setTimeout(() => {
-                effect.remove();
-            }, 1500);
-        }, i * 400);
+    if (!isSuccess && resultData.expectedQuery) {
+        contentHTML += `
+            <div class="expected-query">
+                <h4>Ожидаемый запрос:</h4>
+                <pre>${resultData.expectedQuery}</pre>
+            </div>
+        `;
+    }
+
+    if (isSuccess) {
+        if (currentTaskIndex < tasks.length - 1) {
+            contentHTML += `
+                <button id="next-task-btn" class="next-task-button">
+                    Следующее задание <i class="fas fa-arrow-right"></i>
+                </button>
+            `;
+        } else {
+            contentHTML += `
+                <div class="lesson-complete">
+                    🎉 Поздравляем! Вы завершили урок
+                </div>
+            `;
+        }
+    }
+
+    contentHTML += `</div>`;
+    container.innerHTML = contentHTML;
+
+    const nextBtn = document.getElementById('next-task-btn');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            showTask(currentTaskIndex + 1);
+            container.style.display = 'none';
+        });
+    }
+
+    if (isSuccess) {
+        createSuccessEffects();
     }
 }
 
@@ -466,6 +471,117 @@ function getLessonIcon(topic) {
         if (topic.includes(key)) return icon;
     }
     return icons.default;
+}
+
+// Функции работы с UI
+function setupQueryInput() {
+    const queryInput = document.getElementById('query-input');
+    const hintsContainer = document.getElementById('query-hints');
+
+    queryInput.addEventListener('input', function() {
+        const cursorPos = this.selectionStart;
+        const textBeforeCursor = this.value.substring(0, cursorPos);
+        const lastWord = textBeforeCursor.split(/\s+/).pop().toUpperCase();
+
+        if (lastWord.length > 1) {
+            const matchingKeywords = SQL_KEYWORDS.filter(kw =>
+                kw.startsWith(lastWord)
+            );
+
+            if (matchingKeywords.length > 0) {
+                hintsContainer.innerHTML = matchingKeywords.map(kw =>
+                    `<span class="query-hint">${kw}</span>`
+                ).join('');
+                hintsContainer.style.display = 'block';
+            } else {
+                hintsContainer.style.display = 'none';
+            }
+        } else {
+            hintsContainer.style.display = 'none';
+        }
+    });
+
+    queryInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab' && hintsContainer.style.display === 'block') {
+            e.preventDefault();
+            const hint = hintsContainer.querySelector('.query-hint');
+            if (hint) {
+                const wordToComplete = hint.textContent;
+                const cursorPos = this.selectionStart;
+                const textBeforeCursor = this.value.substring(0, cursorPos);
+                const lastSpacePos = textBeforeCursor.lastIndexOf(' ');
+                const textToInsert = wordToComplete.substring(
+                    textBeforeCursor.substring(lastSpacePos + 1).length
+                );
+
+                this.value = this.value.substring(0, cursorPos) +
+                    textToInsert +
+                    this.value.substring(cursorPos);
+                this.selectionStart = cursorPos + textToInsert.length;
+                this.selectionEnd = cursorPos + textToInsert.length;
+                hintsContainer.style.display = 'none';
+            }
+        }
+    });
+
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    queryInput.parentNode.insertBefore(cursor, queryInput.nextSibling);
+}
+
+function setupEventListeners() {
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('start-lesson')) {
+            const lessonId = e.target.getAttribute('data-id');
+            loadLessonDetails(lessonId);
+        }
+    });
+
+    document.getElementById('back-button').addEventListener('click', () => {
+        document.getElementById('lesson-details').style.display = 'none';
+        document.getElementById('lessons-container').style.display = 'grid';
+    });
+
+    document.getElementById('show-schema').addEventListener('click', () => {
+        if (tasks[currentTaskIndex]) {
+            showDatabaseSchema(tasks[currentTaskIndex].schemaDefinition);
+        }
+    });
+
+    document.getElementById('query-submit').addEventListener('click', checkQuery);
+
+    document.getElementById('query-input').addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') {
+            checkQuery();
+        }
+    });
+
+    document.getElementById('mystic-eye').addEventListener('click', function() {
+        const helpModal = document.getElementById('help-modal');
+        helpModal.style.display = 'block';
+
+        if (isEyeAnimationEnabled) {
+            createJoinEffect();
+            if (Math.random() > 0.5) {
+                showRandomEyeMessage();
+            }
+        }
+        isEyeAnimationEnabled = !isEyeAnimationEnabled;
+    });
+
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+    });
 }
 
 function showDatabaseSchema(schemaDefinition) {
@@ -507,6 +623,8 @@ function showDatabaseSchema(schemaDefinition) {
 
 function showError(message) {
     const container = document.getElementById('lessons-container');
+    if (!container) return;
+
     container.innerHTML = `
         <div class="link-card" style="grid-column: 1 / -1; text-align: center;">
             <h3 class="link-title"><i class="fas fa-exclamation-triangle"></i> Ошибка</h3>
@@ -518,53 +636,111 @@ function showError(message) {
     `;
 }
 
-function setupEventListeners() {
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('start-lesson')) {
-            const lessonId = e.target.getAttribute('data-id');
-            loadLessonDetails(lessonId);
+// Эффекты и анимации
+function createFloatingSymbols() {
+    const symbols = ['@', '#', '$', '%', '&', '*', ';', 'SELECT', 'FROM', 'WHERE', 'JOIN'];
+    const container = document.body;
+
+    for (let i = 0; i < 15; i++) {
+        const symbol = document.createElement('div');
+        symbol.className = 'floating-symbol';
+
+        if (Math.random() < 0.3) {
+            const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'ORDER BY'];
+            symbol.textContent = keywords[Math.floor(Math.random() * keywords.length)];
+            symbol.classList.add('sql-keyword');
+        } else {
+            symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
         }
-    });
 
-    document.getElementById('back-button').addEventListener('click', () => {
-        document.getElementById('lesson-details').style.display = 'none';
-        document.getElementById('lessons-container').style.display = 'grid';
-    });
+        symbol.style.left = `${Math.random() * 90 + 5}%`;
+        symbol.style.top = `${Math.random() * 90 + 5}%`;
+        symbol.style.animationDelay = `${Math.random() * 5}s`;
+        symbol.style.animationDuration = `${Math.random() * 6 + 4}s`;
 
-    document.getElementById('show-schema').addEventListener('click', () => {
-        if (tasks[currentTaskIndex]) {
-            showDatabaseSchema(tasks[currentTaskIndex].schemaDefinition);
-        }
-    });
-
-    document.getElementById('query-submit').addEventListener('click', checkQuery);
-
-    document.getElementById('query-input').addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'Enter') {
-            checkQuery();
-        }
-    });
-
-    document.getElementById('mystic-eye').addEventListener('click', function() {
-        const helpModal = document.getElementById('help-modal');
-        helpModal.style.display = 'block';
-
-        if (Math.random() > 0.5) {
-            showRandomEyeMessage();
-        }
-    });
-
-    document.querySelectorAll('.close-modal').forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-            }
-        });
-    });
+        container.appendChild(symbol);
+    }
 }
+
+function startMysticEyeMessages() {
+    setTimeout(showRandomEyeMessage, 10000);
+    setInterval(() => {
+        if (Math.random() > 0.3) showRandomEyeMessage();
+    }, 30000);
+}
+
+function showRandomEyeMessage() {
+    const message = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+    showEyeMessage(message);
+}
+
+function showEyeMessage(message) {
+    const eye = document.getElementById('mystic-eye');
+    if (!eye) return;
+
+    const messageElement = document.createElement('div');
+    messageElement.className = 'eye-message';
+    messageElement.textContent = message;
+
+    const oldMessage = eye.querySelector('.eye-message');
+    if (oldMessage) oldMessage.remove();
+
+    eye.appendChild(messageElement);
+
+    setTimeout(() => {
+        messageElement.remove();
+    }, 6000);
+}
+
+function createSuccessEffects() {
+    const effectsContainer = document.querySelector('.success-effects');
+    if (!effectsContainer) return;
+
+    createJoinEffect();
+
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const effect = document.createElement('div');
+            effect.className = 'floating-symbol success-symbol';
+            effect.innerHTML = ['✓', '✔', '⭐', '🎉', '👏'][Math.floor(Math.random() * 5)];
+            effect.style.color = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'][Math.floor(Math.random() * 5)];
+            effect.style.left = `${Math.random() * 70 + 15}%`;
+            effect.style.top = `${Math.random() * 70 + 15}%`;
+            effect.style.fontSize = `${Math.random() * 1 + 1.5}rem`;
+            effectsContainer.appendChild(effect);
+
+            setTimeout(() => {
+                effect.remove();
+            }, 2000);
+        }, i * 200);
+    }
+}
+
+function createJoinEffect() {
+    const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'ORDER BY',
+        'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER'];
+    const colors = ['#00ff9d', '#00ffff', '#9d00ff', '#ff00ff', '#2b00ff'];
+
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const effect = document.createElement('div');
+            effect.className = 'join-effect';
+            effect.textContent = keywords[Math.floor(Math.random() * keywords.length)];
+            effect.style.color = colors[Math.floor(Math.random() * colors.length)];
+            effect.style.left = `${Math.random() * 70 + 15}%`;
+            effect.style.top = `${Math.random() * 70 + 15}%`;
+            effect.style.fontSize = `${Math.random() * 2 + 1.5}rem`;
+
+            document.body.appendChild(effect);
+
+            setTimeout(() => {
+                effect.remove();
+            }, 1500);
+        }, i * 200);
+    }
+}
+
+// Инициализация приложения
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
+});

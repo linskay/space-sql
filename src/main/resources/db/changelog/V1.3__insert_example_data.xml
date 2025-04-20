@@ -6,29 +6,760 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.19.xsd">
 
     <changeSet id="1" author="space-sql">
-        <!-- Пример для задачи 1 -->
+        <!-- Задачи для Урока 1: Основы SELECT -->
         <insert tableName="task_example_data">
             <column name="task_id" value="1"/>
             <column name="example_data" value='{
                 "type": "simple",
                 "table": "users",
                 "rows": [
-                    {"id": 1, "name": "Иван Иванов", "age": 25, "email": "ivan@example.com"},
-                    {"id": 2, "name": "Мария Петрова", "age": 30, "email": "maria@example.com"}
+                    {"id": 1, "name": "Олег", "age": 25, "email": "oleg@example.com"},
+                    {"id": 2, "name": "Никита", "age": 30, "email": "nikita@example.com"}
                 ]
             }'/>
         </insert>
-
-        <!-- Пример для задачи 2 -->
         <insert tableName="task_example_data">
             <column name="task_id" value="2"/>
             <column name="example_data" value='{
                 "type": "simple",
                 "table": "users",
                 "rows": [
-                    {"name": "Иван Иванов", "email": "ivan@example.com"},
-                    {"name": "Мария Петрова", "email": "maria@example.com"}
+                    {"name": "Олег", "email": "oleg@example.com"},
+                    {"name": "Никита", "email": "nikita@example.com"}
                 ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="3"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "age": 28, "email": "oleg@example.com"},
+                    {"id": 2, "name": "Никита", "age": 22, "email": "nikita@example.com"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="4"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "city": "Москва"},
+                    {"id": 2, "name": "Никита", "city": "Санкт-Петербург"},
+                    {"id": 3, "name": "Анна", "city": "Москва"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="5"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег"},
+                    {"id": 2, "name": "Никита"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="6"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "age": 25},
+                    {"id": 2, "name": "Никита", "age": 30}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="7"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "age": 26, "city": "Москва"},
+                    {"id": 2, "name": "Никита", "age": 21, "city": "Санкт-Петербург"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="8"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "age": 22},
+                    {"id": 2, "name": "Никита", "age": 28}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="9"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "city": "Москва"},
+                    {"id": 2, "name": "Никита", "city": "Санкт-Петербург"},
+                    {"id": 3, "name": "Анна", "city": "Казань"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="10"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Андрей"},
+                    {"id": 2, "name": "Алексей"},
+                    {"id": 3, "name": "Борис"}
+                ]
+            }'/>
+        </insert>
+
+        <!-- Задачи для Урока 2: JOIN и отношения -->
+        <insert tableName="task_example_data">
+            <column name="task_id" value="11"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "total": 100.00},
+                        {"id": 2, "user_id": 2, "total": 200.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="12"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "total": 100.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="13"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "total": 100.00},
+                        {"id": 2, "user_id": null, "total": 200.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="14"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "total": 100.00},
+                        {"id": 2, "user_id": null, "total": 200.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="15"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "product_id": 1, "quantity": 2},
+                        {"id": 2, "user_id": 2, "product_id": 2, "quantity": 1}
+                    ],
+                    "products": [
+                        {"id": 1, "name": "Лаптоп", "price": 500.00},
+                        {"id": 2, "name": "Телефон", "price": 300.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="16"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "employees": [
+                        {"id": 1, "name": "Олег", "department": "IT"},
+                        {"id": 2, "name": "Никита", "department": "IT"},
+                        {"id": 3, "name": "Анна", "department": "HR"}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="17"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "total": 100.00},
+                        {"id": 2, "user_id": 1, "total": 200.00},
+                        {"id": 3, "user_id": 2, "total": 150.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="18"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "total": 1000.00},
+                        {"id": 2, "user_id": 1, "total": 200.00},
+                        {"id": 3, "user_id": 2, "total": 150.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="19"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1},
+                        {"id": 2, "user_id": 1},
+                        {"id": 3, "user_id": 2}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="20"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "colors": [
+                        {"color": "Красный"},
+                        {"color": "Синий"}
+                    ],
+                    "sizes": [
+                        {"size": "S"},
+                        {"size": "M"}
+                    ]
+                }
+            }'/>
+        </insert>
+
+        <!-- Задачи для Урока 3: Фильтрация данных -->
+        <insert tableName="task_example_data">
+            <column name="task_id" value="21"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "products",
+                "rows": [
+                    {"id": 1, "name": "Лаптоп", "price": 1200.00},
+                    {"id": 2, "name": "Телефон", "price": 800.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="22"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "orders",
+                "rows": [
+                    {"id": 1, "order_date": "2023-05-01"},
+                    {"id": 2, "order_date": "2022-12-15"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="23"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "city": "Москва", "is_active": true},
+                    {"id": 2, "name": "Никита", "city": "Санкт-Петербург", "is_active": false}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="24"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "city": "Москва"},
+                    {"id": 2, "name": "Никита", "city": "Санкт-Петербург"},
+                    {"id": 3, "name": "Анна", "city": "Казань"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="25"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "city": "Москва"},
+                    {"id": 2, "name": "Никита", "city": "Санкт-Петербург"},
+                    {"id": 3, "name": "Анна", "city": "Казань"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="26"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "products",
+                "rows": [
+                    {"id": 1, "name": "ProMax Телефон"},
+                    {"id": 2, "name": "Basic Лаптоп"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="27"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег"},
+                    {"id": 2, "name": "Никита"},
+                    {"id": 3, "name": "Анна"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="28"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "orders",
+                "rows": [
+                    {"id": 1, "delivery_date": null},
+                    {"id": 2, "delivery_date": "2023-05-01"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="29"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT"},
+                    {"id": 2, "name": "Никита", "department": "IT"},
+                    {"id": 3, "name": "Анна", "department": "HR"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="30"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "city": "Москва", "is_active": true, "registration_date": "2023-03-01"},
+                    {"id": 2, "name": "Никита", "city": "Санкт-Петербург", "is_active": false, "registration_date": "2022-12-15"}
+                ]
+            }'/>
+        </insert>
+
+        <!-- Задачи для Урока 4: Сортировка и агрегация -->
+        <insert tableName="task_example_data">
+            <column name="task_id" value="31"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег"},
+                    {"id": 2, "name": "Никита"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="32"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "products",
+                "rows": [
+                    {"id": 1, "name": "Лаптоп", "price": 1200.00},
+                    {"id": 2, "name": "Телефон", "price": 800.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="33"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT"},
+                    {"id": 2, "name": "Никита", "department": "HR"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="34"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег"},
+                    {"id": 2, "name": "Никита"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="35"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT"},
+                    {"id": 2, "name": "Никита", "department": "HR"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="36"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "salary": 1200.00},
+                    {"id": 2, "name": "Никита", "salary": 1500.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="37"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "orders",
+                "rows": [
+                    {"id": 1, "total": 100.00},
+                    {"id": 2, "total": 200.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="38"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "products",
+                "rows": [
+                    {"id": 1, "name": "Лаптоп", "price": 1200.00},
+                    {"id": 2, "name": "Телефон", "price": 800.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="39"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT", "salary": 1500.00},
+                    {"id": 2, "name": "Никита", "department": "HR", "salary": 1200.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="40"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT", "salary": 1500.00},
+                    {"id": 2, "name": "Никита", "department": "HR", "salary": 1200.00},
+                    {"id": 3, "name": "Анна", "department": "IT", "salary": 1600.00}
+                ]
+            }'/>
+        </insert>
+
+        <!-- Задачи для Урока 5: Изменение данных -->
+        <insert tableName="task_example_data">
+            <column name="task_id" value="41"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": []
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="42"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": []
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="43"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "email": "oleg@example.com"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="44"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT", "salary": 1500.00},
+                    {"id": 2, "name": "Никита", "department": "IT", "salary": 1200.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="45"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег"},
+                    {"id": 2, "name": "Никита"},
+                    {"id": 5, "name": "Анна"}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="46"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "users",
+                "rows": [
+                    {"id": 1, "name": "Олег", "is_active": true},
+                    {"id": 2, "name": "Никита", "is_active": false}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="47"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "salary": 1500.00},
+                    {"id": 2, "name": "Никита", "salary": 1200.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="48"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Иван"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="49"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "old_users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "new_users": []
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="50"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег", "status": "active"},
+                        {"id": 2, "name": "Никита", "status": "inactive"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "order_date": "2023-05-01"}
+                    ]
+                }
+            }'/>
+        </insert>
+
+        <!-- Задачи для Урока 6: Подзапросы -->
+        <insert tableName="task_example_data">
+            <column name="task_id" value="51"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "salary": 1500.00},
+                    {"id": 2, "name": "Никита", "salary": 1200.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="52"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "products",
+                "rows": [
+                    {"id": 1, "name": "Лаптоп", "price": 1200.00},
+                    {"id": 2, "name": "Телефон", "price": 800.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="53"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT", "salary": 1500.00},
+                    {"id": 2, "name": "Никита", "department": "HR", "salary": 1200.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="54"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "products",
+                "rows": [
+                    {"id": 1, "name": "Лаптоп", "price": 1200.00},
+                    {"id": 2, "name": "Телефон", "price": 800.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="55"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег", "city": "Москва"},
+                        {"id": 2, "name": "Никита", "city": "Санкт-Петербург"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1, "total": 100.00}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="56"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="57"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "users": [
+                        {"id": 1, "name": "Олег"},
+                        {"id": 2, "name": "Никита"}
+                    ],
+                    "orders": [
+                        {"id": 1, "user_id": 1}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="58"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "products": [
+                        {"id": 1, "name": "Лаптоп"},
+                        {"id": 2, "name": "Телефон"}
+                    ],
+                    "order_items": [
+                        {"order_id": 1, "product_id": 1, "quantity": 2},
+                        {"order_id": 2, "product_id": 2, "quantity": 1}
+                    ]
+                }
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="59"/>
+            <column name="example_data" value='{
+                "type": "simple",
+                "table": "employees",
+                "rows": [
+                    {"id": 1, "name": "Олег", "department": "IT", "salary": 1500.00},
+                    {"id": 2, "name": "Никита", "department": "HR", "salary": 1200.00}
+                ]
+            }'/>
+        </insert>
+        <insert tableName="task_example_data">
+            <column name="task_id" value="60"/>
+            <column name="example_data" value='{
+                "type": "join",
+                "tables": {
+                    "products": [
+                        {"id": 1, "name": "Лаптоп", "price": 1200.00},
+                        {"id": 2, "name": "Телефон", "price": 800.00}
+                    ],
+                    "order_items": [
+                        {"order_id": 1, "product_id": 1, "quantity": 2},
+                        {"order_id": 2, "product_id": 2, "quantity": 1}
+                    ]
+                }
             }'/>
         </insert>
     </changeSet>
