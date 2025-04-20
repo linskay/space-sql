@@ -35,70 +35,17 @@ const SQL_KEYWORDS = [
     'SUM', 'AVG', 'MIN', 'MAX', 'DISTINCT', 'AS', 'LIMIT', 'OFFSET'
 ];
 
-function setupQueryInput() {
-    const queryInput = document.getElementById('query-input');
-    const hintsContainer = document.getElementById('query-hints');
-
-    queryInput.addEventListener('input', function() {
-        const cursorPos = this.selectionStart;
-        const textBeforeCursor = this.value.substring(0, cursorPos);
-        const lastWord = textBeforeCursor.split(/\s+/).pop().toUpperCase();
-
-        if (lastWord.length > 1) {
-            const matchingKeywords = SQL_KEYWORDS.filter(kw =>
-                kw.startsWith(lastWord)
-            );
-
-            if (matchingKeywords.length > 0) {
-                hintsContainer.innerHTML = matchingKeywords.map(kw =>
-                    `<span class="query-hint">${kw}</span>`
-                ).join('');
-                hintsContainer.style.display = 'block';
-            } else {
-                hintsContainer.style.display = 'none';
-            }
-        } else {
-            hintsContainer.style.display = 'none';
-        }
-    });
-
-    queryInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Tab' && hintsContainer.style.display === 'block') {
-            e.preventDefault();
-            const hint = hintsContainer.querySelector('.query-hint');
-            if (hint) {
-                const wordToComplete = hint.textContent;
-                const cursorPos = this.selectionStart;
-                const textBeforeCursor = this.value.substring(0, cursorPos);
-                const lastSpacePos = textBeforeCursor.lastIndexOf(' ');
-                const textToInsert = wordToComplete.substring(
-                    textBeforeCursor.substring(lastSpacePos + 1).length
-                );
-
-                this.value = this.value.substring(0, cursorPos) +
-                    textToInsert +
-                    this.value.substring(cursorPos);
-                this.selectionStart = cursorPos + textToInsert.length;
-                this.selectionEnd = cursorPos + textToInsert.length;
-                hintsContainer.style.display = 'none';
-            }
-        }
-    });
-
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    queryInput.parentNode.insertBefore(cursor, queryInput.nextSibling);
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
+// Основная функция инициализации
+async function initializeApp() {
     createFloatingSymbols();
     await loadLessons();
     setupEventListeners();
-    checkAuthStatus();
+    await checkAuthStatus();
     startMysticEyeMessages();
     setupQueryInput();
-});
+}
 
+// Функции аутентификации
 async function checkAuthStatus() {
     try {
         const response = await fetch('/api/auth/status');
@@ -128,61 +75,7 @@ function updateAuthUI(user) {
     }
 }
 
-function createFloatingSymbols() {
-    const symbols = ['@', '#', '$', '%', '&', '*', ';', 'SELECT', 'FROM', 'WHERE', 'JOIN'];
-    const container = document.body;
-
-    for (let i = 0; i < 15; i++) {
-        const symbol = document.createElement('div');
-        symbol.className = 'floating-symbol';
-
-        if (Math.random() < 0.3) {
-            const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'ORDER BY'];
-            symbol.textContent = keywords[Math.floor(Math.random() * keywords.length)];
-            symbol.classList.add('sql-keyword');
-        } else {
-            symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        }
-
-        symbol.style.left = `${Math.random() * 90 + 5}%`;
-        symbol.style.top = `${Math.random() * 90 + 5}%`;
-        symbol.style.animationDelay = `${Math.random() * 5}s`;
-        symbol.style.animationDuration = `${Math.random() * 6 + 4}s`;
-
-        container.appendChild(symbol);
-    }
-}
-
-function startMysticEyeMessages() {
-    setTimeout(showRandomEyeMessage, 10000);
-    setInterval(() => {
-        if (Math.random() > 0.3) showRandomEyeMessage();
-    }, 30000);
-}
-
-function showRandomEyeMessage() {
-    const message = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
-    showEyeMessage(message);
-}
-
-function showEyeMessage(message) {
-    const eye = document.getElementById('mystic-eye');
-    if (!eye) return;
-
-    const messageElement = document.createElement('div');
-    messageElement.className = 'eye-message';
-    messageElement.textContent = message;
-
-    const oldMessage = eye.querySelector('.eye-message');
-    if (oldMessage) oldMessage.remove();
-
-    eye.appendChild(messageElement);
-
-    setTimeout(() => {
-        messageElement.remove();
-    }, 6000);
-}
-
+// Функции работы с уроками
 async function loadLessons() {
     try {
         const response = await fetch('/api/lessons');
@@ -285,6 +178,7 @@ async function loadLessonDetails(lessonId) {
     }
 }
 
+// Функции работы с заданиями
 async function showTask(taskIndex) {
     if (taskIndex < 0 || taskIndex >= tasks.length) return;
 
@@ -473,14 +367,27 @@ async function checkQuery() {
             })
         });
 
+        const result = await response.json();
+
         if (!response.ok) {
-            throw new Error('Ошибка сервера');
+            showResult(result.feedback || 'Ошибка сервера', false, result);
+            return;
         }
 
-        const result = await response.json();
-        showResult(result.feedback, result.isCorrect);
+        const isCorrect = result.correct || result.isCorrect || false;
+        const feedback = result.feedback || result.message || (isCorrect ? 'Запрос верный!' : 'Запрос неверный');
+        const expectedQuery = result.expectedQuery || null;
+
+        showResult(feedback, isCorrect, {
+            expectedQuery: expectedQuery
+        });
+
+        if (isCorrect) {
+            document.getElementById('query-input').value = '';
+        }
     } catch (error) {
-        showResult(error.message, false);
+        console.error('Ошибка:', error);
+        showResult('Произошла ошибка при проверке запроса', false);
     }
 }
 
@@ -489,6 +396,61 @@ function getCsrfToken() {
         .split('; ')
         .find(row => row.startsWith('XSRF-TOKEN='))
         ?.split('=')[1] || '';
+}
+
+function showResult(message, isSuccess, resultData = {}) {
+    const container = document.getElementById('query-result');
+    if (!container) return;
+
+    container.className = 'result-container';
+    container.classList.add(isSuccess ? 'success' : 'error');
+    container.style.display = 'block';
+
+    let contentHTML = `
+        <div class="result-content">
+            <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+            <div class="result-message">${message}</div>
+    `;
+
+    if (!isSuccess && resultData.expectedQuery) {
+        contentHTML += `
+            <div class="expected-query">
+                <h4>Ожидаемый запрос:</h4>
+                <pre>${resultData.expectedQuery}</pre>
+            </div>
+        `;
+    }
+
+    if (isSuccess) {
+        if (currentTaskIndex < tasks.length - 1) {
+            contentHTML += `
+                <button id="next-task-btn" class="next-task-button">
+                    Следующее задание <i class="fas fa-arrow-right"></i>
+                </button>
+            `;
+        } else {
+            contentHTML += `
+                <div class="lesson-complete">
+                    🎉 Поздравляем! Вы завершили урок
+                </div>
+            `;
+        }
+    }
+
+    contentHTML += `</div>`;
+    container.innerHTML = contentHTML;
+
+    const nextBtn = document.getElementById('next-task-btn');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            showTask(currentTaskIndex + 1);
+            container.style.display = 'none';
+        });
+    }
+
+    if (isSuccess) {
+        createSuccessEffects();
+    }
 }
 
 function getLessonIcon(topic) {
@@ -511,56 +473,60 @@ function getLessonIcon(topic) {
     return icons.default;
 }
 
-function showDatabaseSchema(schemaDefinition) {
-    const modal = document.getElementById('schema-modal');
-    const schemaContent = document.getElementById('schema-content');
+// Функции работы с UI
+function setupQueryInput() {
+    const queryInput = document.getElementById('query-input');
+    const hintsContainer = document.getElementById('query-hints');
 
-    const tables = parseSchema(schemaDefinition);
-    let html = '';
+    queryInput.addEventListener('input', function() {
+        const cursorPos = this.selectionStart;
+        const textBeforeCursor = this.value.substring(0, cursorPos);
+        const lastWord = textBeforeCursor.split(/\s+/).pop().toUpperCase();
 
-    tables.forEach(table => {
-        html += `
-            <div class="schema-table-container">
-                <h4>Таблица: ${table.name}</h4>
-                <table class="schema-table">
-                    <thead>
-                        <tr>
-                            <th>Поле</th>
-                            <th>Тип</th>
-                            <th>Описание</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${table.columns.map(col => `
-                            <tr>
-                                <td>${col.name}</td>
-                                <td>${col.type}</td>
-                                <td>${col.primaryKey ? 'PRIMARY KEY' : ''}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
+        if (lastWord.length > 1) {
+            const matchingKeywords = SQL_KEYWORDS.filter(kw =>
+                kw.startsWith(lastWord)
+            );
+
+            if (matchingKeywords.length > 0) {
+                hintsContainer.innerHTML = matchingKeywords.map(kw =>
+                    `<span class="query-hint">${kw}</span>`
+                ).join('');
+                hintsContainer.style.display = 'block';
+            } else {
+                hintsContainer.style.display = 'none';
+            }
+        } else {
+            hintsContainer.style.display = 'none';
+        }
     });
 
-    schemaContent.innerHTML = html || '<p>Схема не доступна</p>';
-    modal.style.display = 'block';
-}
+    queryInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab' && hintsContainer.style.display === 'block') {
+            e.preventDefault();
+            const hint = hintsContainer.querySelector('.query-hint');
+            if (hint) {
+                const wordToComplete = hint.textContent;
+                const cursorPos = this.selectionStart;
+                const textBeforeCursor = this.value.substring(0, cursorPos);
+                const lastSpacePos = textBeforeCursor.lastIndexOf(' ');
+                const textToInsert = wordToComplete.substring(
+                    textBeforeCursor.substring(lastSpacePos + 1).length
+                );
 
-function showError(message) {
-    const container = document.getElementById('lessons-container');
-    if (!container) return;
+                this.value = this.value.substring(0, cursorPos) +
+                    textToInsert +
+                    this.value.substring(cursorPos);
+                this.selectionStart = cursorPos + textToInsert.length;
+                this.selectionEnd = cursorPos + textToInsert.length;
+                hintsContainer.style.display = 'none';
+            }
+        }
+    });
 
-    container.innerHTML = `
-        <div class="link-card" style="grid-column: 1 / -1; text-align: center;">
-            <h3 class="link-title"><i class="fas fa-exclamation-triangle"></i> Ошибка</h3>
-            <p>${message}</p>
-            <button class="link-url" onclick="location.reload()">
-                <i class="fas fa-sync-alt"></i> Попробовать снова
-            </button>
-        </div>
-    `;
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    queryInput.parentNode.insertBefore(cursor, queryInput.nextSibling);
 }
 
 function setupEventListeners() {
@@ -618,51 +584,112 @@ function setupEventListeners() {
     });
 }
 
-function showResult(message, isSuccess) {
-    const container = document.getElementById('query-result');
+function showDatabaseSchema(schemaDefinition) {
+    const modal = document.getElementById('schema-modal');
+    const schemaContent = document.getElementById('schema-content');
+
+    const tables = parseSchema(schemaDefinition);
+    let html = '';
+
+    tables.forEach(table => {
+        html += `
+            <div class="schema-table-container">
+                <h4>Таблица: ${table.name}</h4>
+                <table class="schema-table">
+                    <thead>
+                        <tr>
+                            <th>Поле</th>
+                            <th>Тип</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${table.columns.map(col => `
+                            <tr>
+                                <td>${col.name}</td>
+                                <td>${col.type}</td>
+                                <td>${col.primaryKey ? 'PRIMARY KEY' : ''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    });
+
+    schemaContent.innerHTML = html || '<p>Схема не доступна</p>';
+    modal.style.display = 'block';
+}
+
+function showError(message) {
+    const container = document.getElementById('lessons-container');
     if (!container) return;
 
-    const content = container.querySelector('.result-content');
-    if (!content) return;
-
-    container.className = 'result-container';
-    container.classList.add(isSuccess ? 'success' : 'error');
-
-    if (isSuccess) {
-        content.innerHTML = `
-            <div class="success-animation">
-                <i class="fas fa-check-circle"></i>
-                <span>${message}</span>
-                <div class="success-effects"></div>
-            </div>
-            <button id="next-task-btn" class="next-task-button">
-                Следующее задание <i class="fas fa-arrow-right"></i>
+    container.innerHTML = `
+        <div class="link-card" style="grid-column: 1 / -1; text-align: center;">
+            <h3 class="link-title"><i class="fas fa-exclamation-triangle"></i> Ошибка</h3>
+            <p>${message}</p>
+            <button class="link-url" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> Попробовать снова
             </button>
-        `;
+        </div>
+    `;
+}
 
-        document.getElementById('next-task-btn').addEventListener('click', () => {
-            if (currentTaskIndex < tasks.length - 1) {
-                showTask(currentTaskIndex + 1);
-            } else {
-                showResult('🎉 Поздравляем! Вы завершили все задания урока', true);
-            }
-        });
+// Эффекты и анимации
+function createFloatingSymbols() {
+    const symbols = ['@', '#', '$', '%', '&', '*', ';', 'SELECT', 'FROM', 'WHERE', 'JOIN'];
+    const container = document.body;
 
-        setTimeout(() => {
-            if (currentTaskIndex < tasks.length - 1) {
-                showTask(currentTaskIndex + 1);
-            }
-        }, 3000);
+    for (let i = 0; i < 15; i++) {
+        const symbol = document.createElement('div');
+        symbol.className = 'floating-symbol';
 
-        createSuccessEffects();
-    } else {
-        content.innerHTML = `
-            <i class="fas fa-times-circle"></i>
-            <span>${message}</span>
-        `;
+        if (Math.random() < 0.3) {
+            const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'GROUP BY', 'ORDER BY'];
+            symbol.textContent = keywords[Math.floor(Math.random() * keywords.length)];
+            symbol.classList.add('sql-keyword');
+        } else {
+            symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        }
+
+        symbol.style.left = `${Math.random() * 90 + 5}%`;
+        symbol.style.top = `${Math.random() * 90 + 5}%`;
+        symbol.style.animationDelay = `${Math.random() * 5}s`;
+        symbol.style.animationDuration = `${Math.random() * 6 + 4}s`;
+
+        container.appendChild(symbol);
     }
+}
 
-    container.style.display = 'block';
+function startMysticEyeMessages() {
+    setTimeout(showRandomEyeMessage, 10000);
+    setInterval(() => {
+        if (Math.random() > 0.3) showRandomEyeMessage();
+    }, 30000);
+}
+
+function showRandomEyeMessage() {
+    const message = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+    showEyeMessage(message);
+}
+
+function showEyeMessage(message) {
+    const eye = document.getElementById('mystic-eye');
+    if (!eye) return;
+
+    const messageElement = document.createElement('div');
+    messageElement.className = 'eye-message';
+    messageElement.textContent = message;
+
+    const oldMessage = eye.querySelector('.eye-message');
+    if (oldMessage) oldMessage.remove();
+
+    eye.appendChild(messageElement);
+
+    setTimeout(() => {
+        messageElement.remove();
+    }, 6000);
 }
 
 function createSuccessEffects() {
@@ -712,3 +739,8 @@ function createJoinEffect() {
         }, i * 200);
     }
 }
+
+// Инициализация приложения
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
+});

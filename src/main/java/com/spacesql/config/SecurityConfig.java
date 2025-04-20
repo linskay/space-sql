@@ -29,7 +29,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/tasks/check")
+                        // Можно оставить CSRF защиту для изменения данных
+                        .ignoringRequestMatchers("/api/**") // Игнорируем CSRF для всех API
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -38,11 +39,12 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/static/**",
                                 "/oauth2/authorization/**",
-                                "/login/oauth2/code/**"
+                                "/login/oauth2/code/**",
+                                "/api/**" // Разрешаем доступ ко всем API без аутентификации
                         ).permitAll()
+                        // Оставляем аутентификацию только для специфичных эндпоинтов
                         .requestMatchers("/api/users/me").authenticated()
-                        .requestMatchers("/api/tasks/check").authenticated()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // Разрешаем все остальные запросы
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
@@ -69,7 +71,6 @@ public class SecurityConfig {
         return userRequest -> {
             OAuth2User oauth2User = delegate.loadUser(userRequest);
 
-            // Сохраняем/обновляем пользователя в базе
             String githubUsername = oauth2User.getAttribute("login");
             String avatarUrl = oauth2User.getAttribute("avatar_url");
 

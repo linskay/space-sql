@@ -980,4 +980,32 @@ h1 {
             box-shadow: 0 0 20px rgba(0, 255, 157, 0.8);
         }
     }
+
+    .expected-query {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+    }
+
+    .expected-query h4 {
+        color: var(--sql-green);
+        margin-bottom: 0.5rem;
+    }
+
+    .expected-query pre {
+        white-space: pre-wrap;
+        word-break: break-all;
+        color: var(--starlight);
+    }
+
+    .lesson-complete {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(0, 255, 157, 0.1);
+        border: 1px solid var(--sql-green);
+        border-radius: 5px;
+        text-align: center;
+        animation: pulse 2s infinite;
+    }
 }
