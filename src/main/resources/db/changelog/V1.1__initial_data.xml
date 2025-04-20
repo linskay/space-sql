@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.19.xsd">
+
+    <changeSet id="1" author="space-sql">
+        <!-- Уроки -->
+        <insert tableName="lesson">
+            <column name="id" value="1"/>
+            <column name="title" value="Основы SELECT"/>
+            <column name="description" value="Научитесь извлекать данные из таблиц с помощью базовых запросов SELECT"/>
+            <column name="topic" value="Основы SQL"/>
+            <column name="difficulty" value="Легкий"/>
+            <column name="order_index" value="1"/>
+        </insert>
+
+        <insert tableName="lesson">
+            <column name="id" value="2"/>
+            <column name="title" value="JOIN и отношения"/>
+            <column name="description" value="Освойте соединение таблиц и работу с реляционными данными"/>
+            <column name="topic" value="Работа с несколькими таблицами"/>
+            <column name="difficulty" value="Средний"/>
+            <column name="order_index" value="2"/>
+        </insert>
+
+        <insert tableName="lesson">
+            <column name="id" value="3"/>
+            <column name="title" value="Фильтрация данных"/>
+            <column name="description" value="Научитесь точно фильтровать данные с помощью WHERE и HAVING"/>
+            <column name="topic" value="Фильтрация и сортировка"/>
+            <column name="difficulty" value="Легкий"/>
+            <column name="order_index" value="3"/>
+        </insert>
+
+        <insert tableName="lesson">
+            <column name="id" value="4"/>
+            <column name="title" value="Сортировка и агрегация"/>
+            <column name="description" value="Используйте ORDER BY и агрегатные функции для анализа данных"/>
+            <column name="topic" value="Фильтрация и сортировка"/>
+            <column name="difficulty" value="Легкий"/>
+            <column name="order_index" value="4"/>
+        </insert>
+
+        <insert tableName="lesson">
+            <column name="id" value="5"/>
+            <column name="title" value="Изменение данных"/>
+            <column name="description" value="Научитесь добавлять, изменять и удалять данные с помощью INSERT, UPDATE, DELETE"/>
+            <column name="topic" value="Модификация данных"/>
+            <column name="difficulty" value="Средний"/>
+            <column name="order_index" value="5"/>
+        </insert>
+
+        <insert tableName="lesson">
+            <column name="id" value="6"/>
+            <column name="title" value="Подзапросы"/>
+            <column name="description" value="Освойте мощь подзапросов для сложных выборок данных"/>
+            <column name="topic" value="Продвинутые техники"/>
+            <column name="difficulty" value="Сложный"/>
+            <column name="order_index" value="6"/>
+        </insert>
+
+        <!-- Урок 1: Основы SELECT -->
+        <!-- Задача 1 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор всех данных"/>
+            <column name="description" value="Выберите все записи из таблицы users"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), age INT, email VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users;"/>
+            <column name="order_index" value="1"/>
+        </insert>
+
+        <!-- Задача 2 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор конкретных столбцов"/>
+            <column name="description" value="Выберите только имена и email пользователей"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), age INT, email VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT name, email FROM users;"/>
+            <column name="order_index" value="2"/>
+        </insert>
+
+        <!-- Задача 3 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор с условием"/>
+            <column name="description" value="Выберите пользователей старше 25 лет"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), age INT, email VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE age &gt; 25;"/>
+            <column name="order_index" value="3"/>
+        </insert>
+
+        <!-- Задача 4 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор уникальных значений"/>
+            <column name="description" value="Выберите уникальные города из таблицы пользователей"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), city VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT DISTINCT city FROM users;"/>
+            <column name="order_index" value="4"/>
+        </insert>
+
+        <!-- Задача 5 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор с псевдонимами"/>
+            <column name="description" value="Выберите имена пользователей с псевдонимом 'Имя'"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT name AS 'Имя' FROM users;"/>
+            <column name="order_index" value="5"/>
+        </insert>
+
+        <!-- Задача 6 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор с вычислениями"/>
+            <column name="description" value="Выберите имена и возраст пользователей через 5 лет"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), age INT);"/>
+            <column name="solution_query" value="SELECT name, age + 5 AS age_in_5_years FROM users;"/>
+            <column name="order_index" value="6"/>
+        </insert>
+
+        <!-- Задача 7 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор с несколькими условиями"/>
+            <column name="description" value="Выберите пользователей из Москвы старше 20 лет"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), age INT, city VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE city = 'Москва' AND age &gt; 20;"/>
+            <column name="order_index" value="7"/>
+        </insert>
+
+        <!-- Задача 8 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор с диапазоном"/>
+            <column name="description" value="Выберите пользователей в возрасте от 20 до 30 лет"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), age INT);"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE age BETWEEN 20 AND 30;"/>
+            <column name="order_index" value="8"/>
+        </insert>
+
+        <!-- Задача 9 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор с IN"/>
+            <column name="description" value="Выберите пользователей из Москвы или Санкт-Петербурга"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), city VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE city IN ('Москва', 'Санкт-Петербург');"/>
+            <column name="order_index" value="9"/>
+        </insert>
+
+        <!-- Задача 10 -->
+        <insert tableName="task">
+            <column name="lesson_id" value="1"/>
+            <column name="title" value="Выбор с LIKE"/>
+            <column name="description" value="Выберите пользователей, чьи имена начинаются на 'А'"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE name LIKE 'А%';"/>
+            <column name="order_index" value="10"/>
+        </insert>
+
+        <!-- Урок 2: JOIN и отношения -->
+        <!-- Задача 1: Простой INNER JOIN -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="Простой INNER JOIN"/>
+            <column name="description" value="Соедините таблицы users и orders"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT u.name, o.total FROM users u JOIN orders o ON u.id = o.user_id;"/>
+            <column name="order_index" value="1"/>
+        </insert>
+
+        <!-- Задача 2: LEFT JOIN -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="LEFT JOIN"/>
+            <column name="description" value="Выведите всех пользователей, даже если у них нет заказов"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT u.name, o.total FROM users u LEFT JOIN orders o ON u.id = o.user_id;"/>
+            <column name="order_index" value="2"/>
+        </insert>
+
+        <!-- Задача 3: RIGHT JOIN -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="RIGHT JOIN"/>
+            <column name="description" value="Выведите все заказы, даже если нет информации о пользователе"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT u.name, o.total FROM users u RIGHT JOIN orders o ON u.id = o.user_id;"/>
+            <column name="order_index" value="3"/>
+        </insert>
+
+        <!-- Задача 4: FULL JOIN -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="FULL JOIN"/>
+            <column name="description" value="Выведите все записи из обеих таблиц"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT u.name, o.total FROM users u FULL JOIN orders o ON u.id = o.user_id;"/>
+            <column name="order_index" value="4"/>
+        </insert>
+
+        <!-- Задача 5: Множественные JOIN -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="Множественные JOIN"/>
+            <column name="description" value="Соедините 3 таблицы: users, orders и products"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100), price DECIMAL(10,2)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, product_id INT, quantity INT);"/>
+            <column name="solution_query" value="SELECT u.name, p.name, o.quantity, p.price * o.quantity AS total FROM users u JOIN orders o ON u.id = o.user_id JOIN products p ON o.product_id = p.id;"/>
+            <column name="order_index" value="5"/>
+        </insert>
+
+        <!-- Задача 6: SELF JOIN -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="SELF JOIN"/>
+            <column name="description" value="Найдите пары сотрудников, работающих в одном отделе"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT a.name AS employee1, b.name AS employee2, a.department FROM employees a JOIN employees b ON a.department = b.department WHERE a.id &lt; b.id;"/>
+            <column name="order_index" value="6"/>
+        </insert>
+
+        <!-- Задача 7: JOIN с агрегацией -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="JOIN с агрегацией"/>
+            <column name="description" value="Найдите общую сумму заказов для каждого пользователя"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT u.name, SUM(o.total) AS total_spent FROM users u JOIN orders o ON u.id = o.user_id GROUP BY u.name;"/>
+            <column name="order_index" value="7"/>
+        </insert>
+
+        <!-- Задача 8: JOIN с фильтрацией -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="JOIN с фильтрацией"/>
+            <column name="description" value="Найдите пользователей, у которых сумма заказов превышает 1000"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT u.name, SUM(o.total) AS total_spent FROM users u JOIN orders o ON u.id = o.user_id GROUP BY u.name HAVING SUM(o.total) &gt; 1000;"/>
+            <column name="order_index" value="8"/>
+        </insert>
+
+        <!-- Задача 9: JOIN с сортировкой -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="JOIN с сортировкой"/>
+            <column name="description" value="Выведите список пользователей с количеством их заказов, отсортированный по убыванию"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100)); CREATE TABLE orders(id INT PRIMARY KEY, user_id INT);"/>
+            <column name="solution_query" value="SELECT u.name, COUNT(o.id) AS order_count FROM users u LEFT JOIN orders o ON u.id = o.user_id GROUP BY u.name ORDER BY order_count DESC;"/>
+            <column name="order_index" value="9"/>
+        </insert>
+
+        <!-- Задача 10: CROSS JOIN -->
+        <insert tableName="task">
+            <column name="lesson_id" value="2"/>
+            <column name="title" value="CROSS JOIN"/>
+            <column name="description" value="Создайте все возможные комбинации цветов и размеров"/>
+            <column name="schema_definition" value="CREATE TABLE colors(color VARCHAR(100)); CREATE TABLE sizes(size VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT color, size FROM colors CROSS JOIN sizes;"/>
+            <column name="order_index" value="10"/>
+        </insert>
+
+        <!-- ========== УРОК 3: Фильтрация данных ========== -->
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Простая фильтрация"/>
+            <column name="description" value="Выберите продукты дороже 1000 рублей"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100), price DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT * FROM products WHERE price &gt; 1000;"/>
+            <column name="order_index" value="1"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация по дате"/>
+            <column name="description" value="Выберите заказы, сделанные в 2023 году"/>
+            <column name="schema_definition" value="CREATE TABLE orders(id INT PRIMARY KEY, order_date DATE);"/>
+            <column name="solution_query" value="SELECT * FROM orders WHERE order_date BETWEEN '2023-01-01' AND '2023-12-31';"/>
+            <column name="order_index" value="2"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация по нескольким условиям"/>
+            <column name="description" value="Выберите активных пользователей из Москвы"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), city VARCHAR(100), is_active BOOLEAN);"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE city = 'Москва' AND is_active = true;"/>
+            <column name="order_index" value="3"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация с OR"/>
+            <column name="description" value="Выберите пользователей из Москвы или Санкт-Петербурга"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), city VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE city = 'Москва' OR city = 'Санкт-Петербург';"/>
+            <column name="order_index" value="4"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация с NOT"/>
+            <column name="description" value="Выберите пользователей не из Москвы"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), city VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE NOT city = 'Москва';"/>
+            <column name="order_index" value="5"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация с LIKE"/>
+            <column name="description" value="Выберите продукты, название которых содержит 'Pro'"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM products WHERE name LIKE '%Pro%';"/>
+            <column name="order_index" value="6"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация с IN"/>
+            <column name="description" value="Выберите пользователей с определенными ID"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE id IN (1, 3, 5);"/>
+            <column name="order_index" value="7"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация с NULL"/>
+            <column name="description" value="Выберите заказы без указанной даты доставки"/>
+            <column name="schema_definition" value="CREATE TABLE orders(id INT PRIMARY KEY, delivery_date DATE);"/>
+            <column name="solution_query" value="SELECT * FROM orders WHERE delivery_date IS NULL;"/>
+            <column name="order_index" value="8"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Фильтрация с HAVING"/>
+            <column name="description" value="Найдите отделы с более чем 5 сотрудниками"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT department, COUNT(*) AS employee_count FROM employees GROUP BY department HAVING COUNT(*) &gt; 5;"/>
+            <column name="order_index" value="9"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="3"/>
+            <column name="title" value="Комплексная фильтрация"/>
+            <column name="description" value="Выберите активных пользователей из Москвы или Санкт-Петербурга, зарегистрированных в 2023 году"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), city VARCHAR(100), is_active BOOLEAN, registration_date DATE);"/>
+            <column name="solution_query" value="SELECT * FROM users WHERE is_active = true AND (city = 'Москва' OR city = 'Санкт-Петербург') AND registration_date BETWEEN '2023-01-01' AND '2023-12-31';"/>
+            <column name="order_index" value="10"/>
+        </insert>
+
+        <!-- ========== УРОК 4: Сортировка и агрегация ========== -->
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Простая сортировка"/>
+            <column name="description" value="Отсортируйте пользователей по имени в алфавитном порядке"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM users ORDER BY name;"/>
+            <column name="order_index" value="1"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Сортировка по убыванию"/>
+            <column name="description" value="Отсортируйте продукты по цене от дорогих к дешевым"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100), price DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT * FROM products ORDER BY price DESC;"/>
+            <column name="order_index" value="2"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Множественная сортировка"/>
+            <column name="description" value="Отсортируйте сотрудников по отделу, а затем по имени"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT * FROM employees ORDER BY department, name;"/>
+            <column name="order_index" value="3"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Подсчет записей"/>
+            <column name="description" value="Посчитайте количество пользователей"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT COUNT(*) AS user_count FROM users;"/>
+            <column name="order_index" value="4"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Группировка"/>
+            <column name="description" value="Посчитайте количество сотрудников в каждом отделе"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100));"/>
+            <column name="solution_query" value="SELECT department, COUNT(*) AS employee_count FROM employees GROUP BY department;"/>
+            <column name="order_index" value="5"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Среднее значение"/>
+            <column name="description" value="Найдите среднюю зарплату по компании"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT AVG(salary) AS average_salary FROM employees;"/>
+            <column name="order_index" value="6"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Сумма"/>
+            <column name="description" value="Найдите общую сумму всех заказов"/>
+            <column name="schema_definition" value="CREATE TABLE orders(id INT PRIMARY KEY, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT SUM(total) AS total_sum FROM orders;"/>
+            <column name="order_index" value="7"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Минимальное и максимальное значение"/>
+            <column name="description" value="Найдите минимальную и максимальную цену продуктов"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100), price DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT MIN(price) AS min_price, MAX(price) AS max_price FROM products;"/>
+            <column name="order_index" value="8"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Группировка с сортировкой"/>
+            <column name="description" value="Найдите отделы с самой высокой средней зарплатой"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT department, AVG(salary) AS avg_salary FROM employees GROUP BY department ORDER BY avg_salary DESC;"/>
+            <column name="order_index" value="9"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="4"/>
+            <column name="title" value="Комплексная агрегация"/>
+            <column name="description" value="Найдите среднюю зарплату по отделам, где работает более 3 сотрудников"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT department, AVG(salary) AS avg_salary FROM employees GROUP BY department HAVING COUNT(*) &gt; 3 ORDER BY avg_salary DESC;"/>
+            <column name="order_index" value="10"/>
+        </insert>
+
+        <!-- ========== УРОК 5: Изменение данных ========== -->
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Добавление записи"/>
+            <column name="description" value="Добавьте нового пользователя"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));"/>
+            <column name="solution_query" value="INSERT INTO users VALUES (1, 'Иван', 'ivan@example.com');"/>
+            <column name="order_index" value="1"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Добавление нескольких записей"/>
+            <column name="description" value="Добавьте трех новых пользователей"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));"/>
+            <column name="solution_query" value="INSERT INTO users VALUES (1, 'Иван', 'ivan@example.com'), (2, 'Мария', 'maria@example.com'), (3, 'Алексей', 'alex@example.com');"/>
+            <column name="order_index" value="2"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Обновление записи"/>
+            <column name="description" value="Обновите email пользователя с id=1"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));
+INSERT INTO users VALUES (1, 'Иван', 'ivan@example.com');"/>
+            <column name="solution_query" value="UPDATE users SET email = 'ivan.new@example.com' WHERE id = 1;"/>
+            <column name="order_index" value="3"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Обновление нескольких записей"/>
+            <column name="description" value="Увеличьте зарплату всем сотрудникам IT отдела на 10%"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="UPDATE employees SET salary = salary * 1.1 WHERE department = 'IT';"/>
+            <column name="order_index" value="4"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Удаление записи"/>
+            <column name="description" value="Удалите пользователя с id=5"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="DELETE FROM users WHERE id = 5;"/>
+            <column name="order_index" value="5"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Удаление нескольких записей"/>
+            <column name="description" value="Удалите всех неактивных пользователей"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), is_active BOOLEAN);"/>
+            <column name="solution_query" value="DELETE FROM users WHERE is_active = false;"/>
+            <column name="order_index" value="6"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Обновление с подзапросом"/>
+            <column name="description" value="Увеличьте зарплату сотрудникам, чья зарплата ниже средней"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="UPDATE employees SET salary = salary * 1.05 WHERE salary &lt; (SELECT AVG(salary) FROM employees);"/>
+            <column name="order_index" value="7"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Удаление с JOIN"/>
+            <column name="description" value="Удалите все заказы пользователя 'Иван'"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));
+CREATE TABLE orders(id INT PRIMARY KEY, user_id INT);
+INSERT INTO users VALUES (1, 'Иван');"/>
+            <column name="solution_query" value="DELETE orders FROM orders JOIN users ON orders.user_id = users.id WHERE users.name = 'Иван';"/>
+            <column name="order_index" value="8"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Вставка из другой таблицы"/>
+            <column name="description" value="Скопируйте всех пользователей из таблицы old_users в new_users"/>
+            <column name="schema_definition" value="CREATE TABLE old_users(id INT PRIMARY KEY, name VARCHAR(100));
+CREATE TABLE new_users(id INT PRIMARY KEY, name VARCHAR(100));"/>
+            <column name="solution_query" value="INSERT INTO new_users SELECT * FROM old_users;"/>
+            <column name="order_index" value="9"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="5"/>
+            <column name="title" value="Комплексное изменение"/>
+            <column name="description" value="Удалите все заказы старше 2022 года и обновите статус пользователей, у которых нет заказов"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), status VARCHAR(100));
+CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, order_date DATE);"/>
+            <column name="solution_query" value="DELETE FROM orders WHERE order_date &lt; '2023-01-01'; UPDATE users SET status = 'inactive' WHERE id NOT IN (SELECT DISTINCT user_id FROM orders);"/>
+            <column name="order_index" value="10"/>
+        </insert>
+
+        <!-- ========== УРОК 6: Подзапросы ========== -->
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Простой подзапрос"/>
+            <column name="description" value="Найдите сотрудников с зарплатой выше средней"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT name FROM employees WHERE salary &gt; (SELECT AVG(salary) FROM employees);"/>
+            <column name="order_index" value="1"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Подзапрос в WHERE"/>
+            <column name="description" value="Найдите продукты дороже среднего"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100), price DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT * FROM products WHERE price &gt; (SELECT AVG(price) FROM products);"/>
+            <column name="order_index" value="2"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Подзапрос в FROM"/>
+            <column name="description" value="Найдите среднюю зарплату по отделам, где она выше средней по компании"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT department, avg_salary FROM (SELECT department, AVG(salary) AS avg_salary FROM employees GROUP BY department) AS dept_avg WHERE avg_salary &gt; (SELECT AVG(salary) FROM employees);"/>
+            <column name="order_index" value="3"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Подзапрос в SELECT"/>
+            <column name="description" value="Для каждого продукта выведите его цену и разницу со средней ценой"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100), price DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT name, price, price - (SELECT AVG(price) FROM products) AS difference FROM products;"/>
+            <column name="order_index" value="4"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Подзапрос с IN"/>
+            <column name="description" value="Найдите заказы пользователей из Москвы"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), city VARCHAR(100));
+CREATE TABLE orders(id INT PRIMARY KEY, user_id INT, total DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT * FROM orders WHERE user_id IN (SELECT id FROM users WHERE city = 'Москва');"/>
+            <column name="order_index" value="5"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Подзапрос с EXISTS"/>
+            <column name="description" value="Найдите пользователей, сделавших хотя бы один заказ"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));
+CREATE TABLE orders(id INT PRIMARY KEY, user_id INT);"/>
+            <column name="solution_query" value="SELECT * FROM users u WHERE EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id);"/>
+            <column name="order_index" value="6"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Подзапрос с NOT EXISTS"/>
+            <column name="description" value="Найдите пользователей без заказов"/>
+            <column name="schema_definition" value="CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));
+CREATE TABLE orders(id INT PRIMARY KEY, user_id INT);"/>
+            <column name="solution_query" value="SELECT * FROM users u WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id);"/>
+            <column name="order_index" value="7"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Коррелированный подзапрос"/>
+            <column name="description" value="Для каждого продукта выведите количество заказов, где он присутствует"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100));
+CREATE TABLE order_items(order_id INT, product_id INT, quantity INT);"/>
+            <column name="solution_query" value="SELECT p.name, (SELECT COUNT(*) FROM order_items oi WHERE oi.product_id = p.id) AS order_count FROM products p;"/>
+            <column name="order_index" value="8"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Подзапрос в HAVING"/>
+            <column name="description" value="Найдите отделы, где средняя зарплата выше средней по компании"/>
+            <column name="schema_definition" value="CREATE TABLE employees(id INT PRIMARY KEY, name VARCHAR(100), department VARCHAR(100), salary DECIMAL(10,2));"/>
+            <column name="solution_query" value="SELECT department, AVG(salary) AS avg_salary FROM employees GROUP BY department HAVING AVG(salary) &gt; (SELECT AVG(salary) FROM employees);"/>
+            <column name="order_index" value="9"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="lesson_id" value="6"/>
+            <column name="title" value="Множественные подзапросы"/>
+            <column name="description" value="Найдите продукты, которые дороже среднего и были заказаны более 5 раз"/>
+            <column name="schema_definition" value="CREATE TABLE products(id INT PRIMARY KEY, name VARCHAR(100), price DECIMAL(10,2));
+CREATE TABLE order_items(order_id INT, product_id INT, quantity INT);"/>
+            <column name="solution_query" value="SELECT p.name FROM products p WHERE p.price &gt; (SELECT AVG(price) FROM products) AND p.id IN (SELECT product_id FROM order_items GROUP BY product_id HAVING SUM(quantity) &gt; 5);"/>
+            <column name="order_index" value="10"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
