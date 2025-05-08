@@ -93,3 +93,68 @@
 Мы благодарны всем участникам за их вклад! Если вы хотите быть упомянутым как контрибьютор проекта, пожалуйста, сообщите нам об этом при создании Pull Request.
 
 Давайте вместе сделаем обучение SQL еще более увлекательным! 🌌
+
+
+```mermaid
+flowchart TD
+    %% Настройка общего стиля
+    classDef default fill:#111,stroke-width:2px,color:white,font-family:Arial
+    
+    %% Клиентский слой
+    subgraph "Client (Browser)"
+        Static["Static Assets"]:::frontend
+        Templates["Thymeleaf Templates"]:::frontend
+    end
+
+    %% Основные компоненты
+    App["SpaceSqlApplication"]:::app
+    DB[("PostgreSQL / H2")]:::db
+    OAuth(["GitHub OAuth2"]):::external
+
+    %% Конфигурация
+    Jackson["JacksonConfig"]:::config
+    Security["SecurityConfig"]:::config
+    Swagger["SwaggerConfig"]:::config
+
+    %% Контроллеры
+    LessonC["LessonController"]:::controller
+    QueryC["QueryController"]:::controller
+    UserC["UserController"]:::controller
+
+    %% Сервисы
+    QueryS["QueryService"]:::service
+    Validator["SqlValidator"]:::util
+
+    %% Связи
+    Static --> App
+    Templates --> App
+    App --> Jackson
+    App --> Security
+    App --> Swagger
+    Security --> OAuth
+    App --> LessonC
+    LessonC --> QueryC
+    QueryC --> QueryS
+    QueryS --> Validator
+    QueryS --> DB
+
+    %% Стили компонентов
+    classDef frontend fill:#111,stroke:#0ff,stroke-width:2px,color:#0ff
+    classDef app fill:#111,stroke:#f0f,stroke-width:2px,color:#f0f
+    classDef config fill:#111,stroke:#ff0,stroke-width:2px,color:#ff0
+    classDef controller fill:#111,stroke:#0f0,stroke-width:2px,color:#0f0
+    classDef service fill:#111,stroke:#f80,stroke-width:2px,color:#f80
+    classDef util fill:#111,stroke:#f08,stroke-width:2px,color:#f08
+    classDef db fill:#111,stroke:#8f0,stroke-width:3px,stroke-dasharray:5 5,color:#8f0
+    classDef external fill:#111,stroke:#f0f,stroke-width:2px,stroke-dasharray:2 2,color:#f0f
+
+    %% Стили связей
+    linkStyle 0,1 stroke:#0ff,stroke-width:2px
+    linkStyle 2,3,4 stroke:#f0f,stroke-width:2px
+    linkStyle 5 stroke:#ff0,stroke-width:2px
+    linkStyle 6,7 stroke:#0f0,stroke-width:2px
+    linkStyle 8 stroke:#f80,stroke-width:2px
+    linkStyle 9 stroke:#f08,stroke-width:2px
+    linkStyle 10 stroke:#8f0,stroke-width:2px
+```
+   
