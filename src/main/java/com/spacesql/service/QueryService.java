@@ -25,41 +25,11 @@ public class QueryService {
     }
 
     private QueryCheckResponse buildResponse(Task task, String userQuery, boolean isCorrect) {
-        String feedback;
-
-        if (isCorrect) {
-            feedback = "✅ Запрос верный!";
-        } else {
-            feedback = analyzeDifferences(task.getSolutionQuery(), userQuery);
-        }
-
+        String feedback = isCorrect ? "✅ Запрос верный!" : "❌ Неверный запрос. Проверьте синтаксис и логику.";
         return QueryCheckResponse.builder()
                 .isCorrect(isCorrect)
                 .feedback(feedback)
                 .expectedQuery(isCorrect ? null : task.getSolutionQuery())
                 .build();
-    }
-
-    private String analyzeDifferences(String expected, String actual) {
-        if (expected == null || actual == null) {
-            return "❌ Неверный запрос";
-        }
-
-        String normalizedExpected = sqlValidator.normalizeSql(expected);
-        String normalizedActual = sqlValidator.normalizeSql(actual);
-
-        if (normalizedActual.length() < normalizedExpected.length() / 2) {
-            return "❌ Запрос слишком короткий. Возможно, не хватает условий.";
-        }
-
-        if (!normalizedActual.contains("WHERE") && normalizedExpected.contains("WHERE")) {
-            return "❌ В запросе отсутствует условие WHERE";
-        }
-
-        if (!normalizedActual.contains("SELECT") || !normalizedActual.contains("FROM")) {
-            return "❌ Запрос должен содержать SELECT и FROM";
-        }
-
-        return "❌ Неверный запрос. Проверьте синтаксис и логику.";
     }
 }
