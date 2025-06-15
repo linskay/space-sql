@@ -443,6 +443,7 @@ function showResult(message, isSuccess, resultData = {}) {
     const nextBtn = document.getElementById('next-task-btn');
     if (nextBtn) {
         nextBtn.addEventListener('click', () => {
+            resetVisualization();
             showTask(currentTaskIndex + 1);
             container.style.display = 'none';
         });
@@ -527,6 +528,20 @@ function setupQueryInput() {
     const cursor = document.createElement('span');
     cursor.className = 'cursor';
     queryInput.parentNode.insertBefore(cursor, queryInput.nextSibling);
+
+    const submitBtn = document.getElementById('query-submit');
+    submitBtn.addEventListener('click', async () => {
+        const query = queryInput.value.trim();
+        if (!query) return;
+        // Космическая визуализация
+        const visContainer = document.getElementById('visualizationContainer');
+        visContainer.classList.add('active');
+        visualizeQuery(query);
+        // Ждем завершения анимации (1.3 сек), только потом проверяем запрос и показываем результат
+        await new Promise(res => setTimeout(res, 1300));
+        await checkQuery();
+        visContainer.classList.remove('active');
+    });
 }
 
 function setupEventListeners() {
@@ -547,8 +562,6 @@ function setupEventListeners() {
             showDatabaseSchema(tasks[currentTaskIndex].schemaDefinition);
         }
     });
-
-    document.getElementById('query-submit').addEventListener('click', checkQuery);
 
     document.getElementById('query-input').addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key === 'Enter') {
@@ -738,6 +751,129 @@ function createJoinEffect() {
             }, 1500);
         }, i * 200);
     }
+}
+
+// Космическая визуализация запроса
+function visualizeQuery(sqlQuery) {
+    const container = document.getElementById('visualizationContainer');
+    container.innerHTML = '';
+
+    // Смайлик-пользователь 👨‍💻 + подпись
+    const userBlock = document.createElement('div');
+    userBlock.className = 'cosmo-user';
+    userBlock.innerHTML = '<span class="user-emoji">👨‍💻</span><div class="user-label">Вы</div>';
+    container.appendChild(userBlock);
+
+    // Найти блок примера данных (БД)
+    const dbSidebar = document.querySelector('.data-example-sidebar');
+    if (!dbSidebar) return;
+
+    // Получить координаты блока БД относительно visualizationContainer
+    const visRect = container.getBoundingClientRect();
+    const dbRect = dbSidebar.getBoundingClientRect();
+    const offsetLeft = dbRect.left - visRect.left;
+    const offsetTop = dbRect.top - visRect.top;
+    const dbWidth = dbRect.width;
+    const dbHeight = dbRect.height;
+
+    // Динамически создать подпись <сервер> над примером данных (появляется только на время анимации)
+    const serverLabel = document.createElement('div');
+    serverLabel.className = 'server-label cosmo-server-label-anim';
+    serverLabel.textContent = '</сервер>';
+    serverLabel.style.left = (offsetLeft + dbWidth/2) + 'px';
+    serverLabel.style.top = (offsetTop - 38) + 'px';
+    serverLabel.style.opacity = '0';
+    serverLabel.style.position = 'absolute';
+    serverLabel.style.transform = 'translateX(-50%)';
+    container.appendChild(serverLabel);
+
+    // Неоновое облако вокруг блока БД
+    const dbGlow = document.createElement('div');
+    dbGlow.className = 'cosmo-db-glow';
+    dbGlow.style.left = offsetLeft + 'px';
+    dbGlow.style.top = offsetTop + 'px';
+    dbGlow.style.width = dbWidth + 'px';
+    dbGlow.style.height = dbHeight + 'px';
+    dbGlow.style.opacity = '0';
+    container.appendChild(dbGlow);
+
+    // Тонкая кривая стрелка (SVG), не заходит на пример данных
+    const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    arrow.setAttribute('class', 'cosmo-arrow-curve');
+    arrow.setAttribute('width', Math.max(180, offsetLeft + dbWidth/2));
+    arrow.setAttribute('height', Math.max(100, offsetTop - 10));
+    arrow.style.position = 'absolute';
+    arrow.style.left = '0px';
+    arrow.style.top = '0px';
+    // Старт: смайлик, конец — чуть выше блока сервера
+    const startX = 55, startY = 65;
+    const endX = offsetLeft + dbWidth/2, endY = offsetTop - 18;
+    const c1x = startX + 60, c1y = startY - 40;
+    const c2x = endX - 60, c2y = endY + 40;
+    arrow.innerHTML = `
+        <defs>
+            <linearGradient id="arrow-curve-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00f0ff"/>
+                <stop offset="100%" stop-color="#a259ff"/>
+            </linearGradient>
+        </defs>
+        <path d="M${startX},${startY} C${c1x},${c1y} ${c2x},${c2y} ${endX},${endY}" stroke="url(#arrow-curve-gradient)" stroke-width="2.1" fill="none" class="cosmo-arrow-path"/>
+        <circle id="arrowDot" r="6" fill="#fffbe6" filter="url(#glow)"/>
+        <polygon id="arrowHead" points="0,0 10,3 0,6" fill="#a259ff" filter="url(#glow)"/>
+    `;
+    container.appendChild(arrow);
+
+    // Анимация стрелки, кружочка и появления <сервер>
+    setTimeout(() => {
+        const path = arrow.querySelector('.cosmo-arrow-path');
+        if (path) path.classList.add('drawn');
+        animateDotAlongPath(arrow, path, arrow.querySelector('#arrowDot'), arrow.querySelector('#arrowHead'), 1800);
+        setTimeout(() => {
+            dbGlow.classList.add('active');
+            dbGlow.style.opacity = '1';
+            serverLabel.style.opacity = '1';
+        }, 900);
+    }, 200);
+}
+
+// Анимация кружочка по SVG-пути (без изменений)
+function animateDotAlongPath(svg, path, dot, arrowHead, duration) {
+    if (!path || !dot || !arrowHead) return;
+    const len = path.getTotalLength();
+    let start = null;
+    function step(ts) {
+        if (!start) start = ts;
+        let progress = Math.min((ts - start) / duration, 1);
+        const point = path.getPointAtLength(len * progress);
+        dot.setAttribute('cx', point.x);
+        dot.setAttribute('cy', point.y);
+        // Поворот стрелки
+        if (arrowHead) {
+            const angle = progress < 0.99
+                ? Math.atan2(
+                    path.getPointAtLength(len * progress + 1).y - point.y,
+                    path.getPointAtLength(len * progress + 1).x - point.x
+                  ) * 180 / Math.PI
+                : Math.atan2(
+                    point.y - path.getPointAtLength(len * progress - 1).y,
+                    point.x - path.getPointAtLength(len * progress - 1).x
+                  ) * 180 / Math.PI;
+            arrowHead.setAttribute('transform', `translate(${point.x},${point.y - 5}) rotate(${angle})`);
+        }
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        } else {
+            dot.setAttribute('cx', point.x);
+            dot.setAttribute('cy', point.y);
+        }
+    }
+    requestAnimationFrame(step);
+}
+
+// Сброс космической визуализации
+function resetVisualization() {
+    const container = document.getElementById('visualizationContainer');
+    if (container) container.innerHTML = '';
 }
 
 // Инициализация приложения

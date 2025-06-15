@@ -1009,3 +1009,81 @@ h1 {
         animation: pulse 2s infinite;
     }
 }
+
+/* --- КОСМИЧЕСКАЯ ВИЗУАЛИЗАЦИЯ V3 --- */
+#visualizationContainer {
+    position: relative;
+    min-height: 180px;
+    margin: 20px 0 10px 0;
+    z-index: 5;
+    pointer-events: none;
+}
+.cosmo-user {
+    position: absolute;
+    left: 10px;
+    top: 40px;
+    z-index: 10;
+    font-size: 2.8em;
+    filter: drop-shadow(0 0 10px #fffbe6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.user-label {
+    font-size: 1em;
+    color: #bdbfff;
+    text-shadow: 0 0 8px #1a1a2e;
+    margin-top: 0.2em;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+.server-label {
+    color: #00f0ff;
+    font-size: 1.12em;
+    font-family: 'Roboto Mono', monospace;
+    text-shadow: 0 0 8px #00f0ff, 0 0 12px #a259ff;
+    letter-spacing: 1px;
+    z-index: 20;
+    pointer-events: none;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.4s;
+}
+.cosmo-server-label-anim {
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.cosmo-server-label-anim[style*='opacity: 1'] {
+    opacity: 1;
+}
+.cosmo-arrow-curve {
+    z-index: 11;
+    pointer-events: none;
+}
+.cosmo-arrow-path {
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    animation: drawCurve 1.8s cubic-bezier(.7,.1,.3,1.4) forwards;
+    filter: drop-shadow(0 0 6px #00f0ff) drop-shadow(0 0 12px #a259ff);
+    stroke-width: 2.1;
+}
+@keyframes drawCurve {
+    to { stroke-dashoffset: 0; }
+}
+.cosmo-db-glow {
+    position: absolute;
+    border-radius: 32px;
+    box-shadow: 0 0 32px 12px #a259ff88, 0 0 16px 6px #00f0ff77;
+    border: 2.5px solid #00f0ffcc;
+    pointer-events: none;
+    transition: box-shadow 0.6s, border-color 0.4s;
+    z-index: 12;
+    opacity: 0.5;
+    background: rgba(30,16,60,0.08);
+}
+.cosmo-db-glow.active {
+    box-shadow: 0 0 60px 24px #a259ffcc, 0 0 32px 12px #00f0ffcc;
+    border-color: #a259ff;
+    opacity: 1;
+}
