@@ -23,6 +23,13 @@
     <properties>
         <java.version>17</java.version>
         <lombok.version>1.18.28</lombok.version>
+        <!-- Database properties -->
+        <db.url>jdbc:postgresql://localhost:5432/space_sql</db.url>
+        <db.username>admin</db.username>
+        <db.password>1111</db.password>
+        <!-- Plugin versions -->
+        <liquibase.version>4.24.0</liquibase.version>
+        <springdoc.version>2.1.0</springdoc.version>
     </properties>
 
     <!-- Dependencies -->
@@ -62,7 +69,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
 
         <!-- Development Tools -->
@@ -77,7 +84,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.1.0</version>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <!-- Testing -->
@@ -91,25 +98,28 @@
     <!-- Build Configuration -->
     <build>
         <plugins>
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- Liquibase plugin для генерации migrate.sql -->
+
+            <!-- Liquibase Plugin -->
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.24.0</version>
+                <version>${liquibase.version}</version>
                 <configuration>
                     <changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
-                    <url>jdbc:postgresql://localhost:5432/space_sql</url>
-                    <username>admin</username>
-                    <password>1111</password>
+                    <url>${db.url}</url>
+                    <username>${db.username}</username>
+                    <password>${db.password}</password>
                     <driver>org.postgresql.Driver</driver>
-                    <outputFile>target/liquibase/migrate.sql</outputFile>
+                    <outputFile>${project.build.directory}/liquibase/migrate.sql</outputFile>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>generate-migration-sql</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>updateSQL</goal>
@@ -117,24 +127,47 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Maven Resources Plugin for copying generated SQL -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
-                        <id>copy-schema</id>
+                        <id>copy-migration-sql</id>
                         <phase>process-resources</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <target>
-                                <copy file="target/liquibase/migrate.sql" tofile="schema.sql" overwrite="true"/>
-                            </target>
+                            <outputDirectory>${project.basedir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/liquibase</directory>
+                                    <includes>
+                                        <include>migrate.sql</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Clean Plugin to ensure fresh builds -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.build.directory}/liquibase</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
             </plugin>
         </plugins>
     </build>
