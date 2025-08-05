@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Lessons from './pages/Lessons';
+import Practice from './pages/Practice';
 import LessonDetails from './components/LessonDetails';
 import StarBackground from './components/StarBackground';
 import './styles.css';
@@ -40,6 +41,16 @@ export default function App() {
               <div className="lesson-page-wrapper">
                 <Header />
                 <LessonDetails />
+                <Footer className="transparent-footer" />
+              </div>
+            } 
+          />
+          <Route 
+            path="/practice" 
+            element={
+              <div className="practice-page-wrapper">
+                <Header />
+                <Practice />
                 <Footer className="transparent-footer" />
               </div>
             } 

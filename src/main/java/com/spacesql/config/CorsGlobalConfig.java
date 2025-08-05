@@ -12,11 +12,21 @@ public class CorsGlobalConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+                // Для разработки - разрешаем все
+                if (System.getProperty("spring.profiles.active", "").contains("dev")) {
+                    registry.addMapping("/**")
+                            .allowedOrigins("http://localhost:3000", "http://localhost:8080")
+                            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                            .allowedHeaders("*")
+                            .allowCredentials(true);
+                } else {
+                    // Для продакшена - более строгие настройки
+                    registry.addMapping("/api/**")
+                            .allowedOrigins("https://your-production-domain.com")
+                            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                            .allowedHeaders("*")
+                            .allowCredentials(true);
+                }
             }
         };
     }
