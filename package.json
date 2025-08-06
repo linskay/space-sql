@@ -26,5 +26,8 @@
     "react"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "react-bootstrap": "^2.10.10"
+  }
 }
