@@ -1,0 +1,1389 @@
+/* Star Background */
+.star-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  z-index: -1; /* Place behind all content */
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+}
+
+.star-field {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Above the container background but below content */
+  pointer-events: none;
+  will-change: transform;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: transform 0.1s ease-out;
+  transform: translateZ(0);
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.5); /* Add glow effect */
+}
+
+.content-layer {
+  position: relative;
+  z-index: 2; /* Above the stars */
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent; /* Remove any background that might cover stars */
+  margin: 0;
+  padding: 0;
+  pointer-events: auto; /* Ensure content is clickable */
+}
+
+/* Сброс стандартных отступов */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Base Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Roboto Mono', monospace;
+    background-color: #0d0221;
+    color: white;
+    line-height: 1.6;
+}
+
+/* Base Styles */
+:root {
+    --space-blue: #0d0221;
+    --space-purple: #2d0b59;
+    --accent-pink: #ff2e88;
+    --accent-cyan: #2de2e6;
+    --text-light: #ffffff;
+    --text-muted: #b8b8b8;
+    --font-main: 'Roboto Mono', monospace;
+    --font-heading: 'Press Start 2P', cursive;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Mono', monospace;
+}
+
+body {
+    background-color: var(--space-blue);
+    color: var(--starlight);
+    overflow-x: hidden;
+    min-height: 100vh;
+    background-image: radial-gradient(circle at 20% 30%, rgba(154, 0, 255, 0.15) 0%, transparent 30%),
+    radial-gradient(circle at 80% 70%, rgba(43, 0, 255, 0.15) 0%, transparent 30%);
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.title-wrapper {
+    flex: 1;
+    min-width: 300px;
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--starlight);
+    text-shadow: 0 0 10px var(--neon-purple),
+    0 0 20px var(--cosmic-blue),
+    0 0 30px var(--sql-green);
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(90deg, var(--neon-purple), var(--sql-green), var(--cosmic-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding: 0 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-family: 'Press Start 2P', cursive;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Auth Panel */
+.auth-panel {
+    position: relative;
+    margin-top: 10px;
+}
+
+.auth-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.github-login {
+    background: linear-gradient(90deg, var(--neon-purple), var(--sql-green));
+    color: white;
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.github-login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px var(--neon-purple);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba(13, 2, 33, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    border: 1px solid var(--neon-purple);
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--sql-green);
+}
+
+.user-name {
+    color: var(--sql-green);
+    font-weight: bold;
+}
+
+.logout-button {
+    background: transparent;
+    border: 1px solid var(--error-red);
+    color: var(--error-red);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.logout-button:hover {
+    background: var(--error-red);
+    color: white;
+}
+
+/* Lessons Grid */
+.links-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.link-card {
+    background: rgba(13, 2, 33, 0.7);
+    border: 1px solid var(--neon-purple);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+.link-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px var(--neon-purple);
+    border-color: var(--sql-green);
+}
+
+.link-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--starlight);
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.link-icon {
+    margin-right: 0.8rem;
+    color: var(--sql-green);
+    font-size: 1.5rem;
+    text-shadow: 0 0 5px var(--sql-green);
+}
+
+.link-description {
+    font-size: 1rem;
+    color: rgba(248, 248, 255, 0.9);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.sql-query {
+    background: rgba(0, 0, 0, 0.5);
+    border-left: 3px solid var(--sql-green);
+    padding: 1rem;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--sql-green);
+    margin-bottom: 1.5rem;
+    border-radius: 0 5px 5px 0;
+    position: relative;
+}
+
+.link-url {
+    display: inline-block;
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(90deg, var(--neon-purple), var(--sql-green));
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 10px var(--neon-purple);
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+.link-url:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 20px var(--neon-purple);
+}
+
+/* Lesson Details */
+.lesson-container {
+    display: none;
+    margin-top: 2rem;
+    background: rgba(13, 2, 33, 0.8);
+    border: 1px solid var(--neon-purple);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 0 20px var(--neon-purple);
+    flex-grow: 1;
+}
+
+.back-button {
+    background: linear-gradient(90deg, var(--neon-purple), var(--sql-green));
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.back-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 20px var(--neon-purple);
+}
+
+.lesson-header {
+    margin-bottom: 2rem;
+}
+
+.lesson-description {
+    font-size: 1.1rem;
+    color: rgba(248, 248, 255, 0.9);
+    line-height: 1.5;
+}
+
+/* Task Section */
+.task-container {
+    margin-bottom: 2rem;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.task-title {
+    color: var(--sql-green);
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--sql-green);
+}
+
+.task-counter {
+    color: var(--mystic-purple);
+    font-size: 1rem;
+}
+
+.task-description {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.task-schema {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1.2rem;
+    border-radius: 8px;
+    font-family: 'Roboto Mono', monospace;
+    color: var(--sql-green);
+    border-left: 3px solid var(--neon-purple);
+    margin-bottom: 1.5rem;
+}
+
+.schema-definition {
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.schema-button, .submit-button {
+    padding: 0.8rem 1.8rem;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.schema-button {
+    background: rgba(106, 0, 244, 0.3);
+    border: 1px solid var(--mystic-purple);
+    color: var(--starlight);
+}
+
+.schema-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px var(--mystic-purple);
+    background: rgba(106, 0, 244, 0.5);
+}
+
+.submit-button {
+    background: linear-gradient(90deg, var(--neon-purple), var(--sql-green));
+    color: white;
+    border: none;
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.submit-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 20px var(--neon-purple);
+}
+
+/* Query Section */
+.query-section {
+    margin-bottom: 1.5rem;
+}
+
+.query-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.query-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--sql-green);
+    color: var(--sql-green);
+    padding: 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    font-family: 'Roboto Mono', monospace;
+    margin-bottom: 1rem;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.query-input:focus {
+    border: 1.5px solid var(--cosmic-blue);
+    box-shadow: 0 0 10px var(--cosmic-blue);
+}
+
+.result-container {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--starlight);
+    font-size: 1rem;
+    box-shadow: 0 0 10px var(--cosmic-blue);
+}
+
+.result-container.error {
+    border: 1px solid var(--error-red);
+    color: var(--error-red);
+    background: rgba(255, 56, 96, 0.1);
+}
+
+.result-container.success {
+    border: 1px solid var(--sql-green);
+    color: var(--sql-green);
+    background: rgba(0, 255, 157, 0.08);
+}
+
+/* Lesson card styles */
+.lessons-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.lesson-card-content {
+  background: #1a1a2e;
+  border-radius: 10px;
+  padding: 1.5rem;
+  height: 100%;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.lesson-card-content:hover {
+  transform: translateY(-5px);
+}
+
+.lesson-title {
+  font-size: 1.2rem;
+  color: white;
+  margin-bottom: 0.8rem;
+}
+
+.lesson-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+/* LessonsList styles */
+.lessons-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.lesson-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Радужные карточки уроков */
+.rainbow-card-1 { background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); }
+.rainbow-card-2 { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
+.rainbow-card-3 { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+.rainbow-card-4 { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+.rainbow-card-5 { background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%); }
+
+/* GlowingCard styles */
+.glowing-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 1px;
+  background: #1a1a2e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    rgba(138, 43, 226, 0.4),
+    transparent 40%
+  );
+  opacity: 0;
+}
+
+.glowing-card:hover .glow {
+  opacity: 1;
+}
+
+.card-content {
+  position: relative;
+  background: #1a1a2e;
+  border-radius: 16px;
+  padding: 2rem;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Подсказки от глаза */
+.eye-hint-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.eye-hint-icon {
+  cursor: help;
+  font-size: 1.5em;
+  transition: all 0.3s;
+}
+
+.eye-hint-icon:hover {
+  transform: scale(1.2);
+}
+
+.eye-hint-text {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c3e50;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  width: 250px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 100;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Модальные окна, визуализация, анимации и адаптив */
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem;
+    }
+    .link-icon {
+        margin-right: 0.8rem;
+        color: var(--sql-green);
+        font-size: 1.5rem;
+        text-shadow: 0 0 5px var(--sql-green);
+        width: 30px;
+        text-align: center;
+    }
+    #help-modal .modal-content {
+        max-width: 600px;
+        background: var(--space-blue);
+        border: 2px solid var(--sql-green);
+    }
+    .help-content {
+        padding: 1rem;
+        line-height: 2;
+        font-size: 1.1rem;
+    }
+    .help-content p {
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+    }
+    .help-content p::before {
+        content: "▶";
+        color: var(--sql-green);
+        margin-right: 0.8rem;
+        font-size: 0.8rem;
+    }
+    .highlight {
+        color: var(--sql-green);
+        font-weight: bold;
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 1.2rem;
+        animation: pulse 2s infinite;
+    }
+    .mystic-eye {
+        transition: all 0.3s;
+    }
+    .mystic-eye:active {
+        transform: scale(0.9);
+    }
+    .query-hints {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--cosmic-blue);
+        border-radius: 5px;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+    .query-hint {
+        display: inline-block;
+        background: rgba(43, 0, 255, 0.2);
+        color: var(--sql-green);
+        padding: 0.2rem 0.5rem;
+        margin: 0.2rem;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+    .query-hint:hover {
+        background: rgba(157, 0, 255, 0.3);
+    }
+    .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.2rem;
+        background: var(--sql-green);
+        animation: blink-cursor 1s infinite;
+        vertical-align: middle;
+    }
+    @keyframes blink-cursor {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+    .success-animation {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+    .success-effects {
+        position: relative;
+        width: 100%;
+        height: 100px;
+        margin: 1rem 0;
+    }
+    .success-symbol {
+        position: absolute;
+        font-size: 2rem;
+        animation: float-up 2s ease-out forwards;
+        opacity: 0;
+        color: var(--sql-green);
+    }
+    .next-task-button {
+        background: linear-gradient(90deg, var(--neon-purple), var(--cosmic-blue));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 1rem;
+        box-shadow: 0 0 15px var(--neon-purple);
+    }
+    .next-task-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px var(--neon-purple);
+    }
+    @keyframes float-up {
+        0% {
+            transform: translateY(0) scale(0.5);
+            opacity: 0;
+        }
+        20% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100px) scale(1.5);
+            opacity: 0;
+        }
+    }
+    .result-container.success {
+        background: rgba(0, 255, 157, 0.15);
+        border: 1px solid var(--sql-green);
+        color: var(--sql-green);
+        animation: pulse-success 2s infinite;
+    }
+    @keyframes pulse-success {
+        0%, 100% {
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+        50% {
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.8);
+        }
+    }
+    .expected-query {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+    }
+    .expected-query h4 {
+        color: var(--sql-green);
+        margin-bottom: 0.5rem;
+    }
+    .expected-query pre {
+        white-space: pre-wrap;
+        word-break: break-all;
+        color: var(--starlight);
+    }
+    .lesson-complete {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(0, 255, 157, 0.1);
+        border: 1px solid var(--sql-green);
+        border-radius: 5px;
+        text-align: center;
+        animation: pulse 2s infinite;
+    }
+}
+
+/* --- КОСМИЧЕСКАЯ ВИЗУАЛИЗАЦИЯ V3 --- */
+#visualizationContainer {
+    position: relative;
+    min-height: 180px;
+    margin: 20px 0 10px 0;
+    z-index: 5;
+    pointer-events: none;
+}
+.cosmo-user {
+    position: absolute;
+    left: 10px;
+    top: 40px;
+    z-index: 10;
+    font-size: 2.8em;
+    filter: drop-shadow(0 0 10px #fffbe6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.user-label {
+    font-size: 1em;
+    color: #bdbfff;
+    text-shadow: 0 0 8px #1a1a2e;
+    margin-top: 0.2em;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+.server-label {
+    color: #00f0ff;
+    font-size: 1.12em;
+    font-family: 'Roboto Mono', monospace;
+    text-shadow: 0 0 8px #00f0ff, 0 0 12px #a259ff;
+    letter-spacing: 1px;
+    z-index: 20;
+    pointer-events: none;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.4s;
+}
+.cosmo-server-label-anim {
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.cosmo-server-label-anim[style*='opacity: 1'] {
+    opacity: 1;
+}
+.cosmo-arrow-curve {
+    z-index: 11;
+    pointer-events: none;
+}
+.cosmo-arrow-path {
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    animation: drawCurve 1.8s cubic-bezier(.7,.1,.3,1.4) forwards;
+    filter: drop-shadow(0 0 6px #00f0ff) drop-shadow(0 0 12px #a259ff);
+    stroke-width: 2.1;
+}
+@keyframes drawCurve {
+    to { stroke-dashoffset: 0; }
+}
+.cosmo-db-glow {
+    position: absolute;
+    border-radius: 32px;
+    box-shadow: 0 0 32px 12px #a259ff88, 0 0 16px 6px #00f0ff77;
+    border: 2.5px solid #00f0ffcc;
+    pointer-events: none;
+    transition: box-shadow 0.6s, border-color 0.4s;
+    z-index: 12;
+    opacity: 0.5;
+    background: rgba(30,16,60,0.08);
+}
+.cosmo-db-glow.active {
+    box-shadow: 0 0 60px 24px #a259ffcc, 0 0 32px 12px #00f0ffcc;
+    border-color: #a259ff;
+    opacity: 1;
+}
+
+/* Космическая главная страница */
+.space-hero-container {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.spline-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.spline-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right, 
+    rgba(10, 10, 30, 0.9), 
+    transparent 30%, 
+    transparent 70%, 
+    rgba(10, 10, 30, 0.9)
+  );
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 10%;
+  color: white;
+  transition: all 0.3s ease-out;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(110, 142, 251, 0.4);
+}
+
+.primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(110, 142, 251, 0.6);
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Индикатор загрузки Spline */
+.spline-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.2rem;
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 1rem 2rem;
+  border-radius: 10px;
+}
+
+/* Альтернативный космический фон */
+.spline-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Добавить звезды */
+.spline-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.5"/></svg>');
+  background-size: 150px 150px;
+  opacity: 0.8;
+  animation: stars-animation 100s linear infinite;
+}
+
+@keyframes stars-animation {
+  from { background-position: 0 0; }
+  to { background-position: -200px -200px; }
+}
+
+/* Стили для состояний загрузки и ошибок */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #7e57c2;
+  font-size: 1.2rem;
+}
+
+.loading i {
+  margin-right: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #ff5252;
+  font-size: 1.2rem;
+  background: rgba(255, 82, 82, 0.1);
+  border-radius: 8px;
+}
+
+.error i {
+  margin-right: 0.5rem;
+  font-size: 1.5rem;
+}
+
+/* Back Button */
+.back-button {
+  background: none;
+  border: none;
+  color: #bb86fc;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  color: #7e57c2;
+  transform: translateX(-3px);
+}
+
+.back-button i {
+  margin-right: 0.5rem;
+}
+
+/* Root styles */
+.app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.content-layer {
+  position: relative;
+}
+
+/* Header z-index fix */
+.header {
+  position: relative;
+  z-index: 10;
+}
+
+/* Lessons page specific */
+.lessons-container {
+  position: relative;
+  z-index: 5;
+}
+
+/* Header styles */
+.title-wrapper h1 {
+  font-size: 1.8rem;
+  color: white;
+  margin: 0;
+}
+
+/* Header styles */
+.nav-links a.active {
+  color: #8a2be2;
+  font-weight: bold;
+  border-bottom: 2px solid #8a2be2;
+}
+
+/* Layout styles */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-container {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Hero wrapper */
+.hero-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 3;
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: white;
+  position: relative;
+  z-index: 4;
+}
+
+/* Star styles */
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.1s linear;
+  animation: twinkle 3s infinite alternate;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.star-field {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* SpaceHero styles */
+.home-page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.home-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.hero-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 2rem 1rem;
+  position: relative;
+  z-index: 2;
+  margin-top: -60px; /* Учитываем высоту навигации */
+}
+
+/* Убедимся, что навигация поверх фона */
+.navbar {
+  position: relative;
+  z-index: 10;
+  background: rgba(15, 12, 41, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  color: white;
+  position: relative;
+  z-index: 3;
+  background: rgba(13, 2, 33, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-title {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, #8a2be2, #00ff9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+  font-family: 'Press Start 2P', cursive;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+  opacity: 0.9;
+  color: #ffffff;
+  font-family: 'Roboto Mono', monospace;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-actions {
+  margin-top: 2rem;
+}
+
+.primary-button {
+  padding: 1rem 2.5rem;
+  background: linear-gradient(45deg, #8a2be2, #00ff9d);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.primary-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(138, 43, 226, 0.6);
+}
+
+.primary-button:active {
+  transform: translateY(1px);
+}
+
+/* Footer styles */
+.home-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 5;
+}
+
+/* Main App Structure */
+.app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+/* Lesson Container */
+.lesson-container {
+  background: rgba(26, 26, 46, 0.9);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Header/Footer fixes */
+header {
+  position: relative;
+  z-index: 3;
+}
+
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Final Perfect Fix */
+.lessons-page-wrapper, .lesson-page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.transparent-footer {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  margin-top: auto;
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+}
+
+/* Lessons Page */
+.lessons-page {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Remove all previous footer styles */
+footer, .page-wrapper, .star-container > footer {
+  all: unset;
+}
+
+/* Restore original styles with fixed footer */
+
+/* Star Background */
+.star-container {
+  position: relative;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 15px 0;
+  background: transparent;
+  z-index: 10;
+}
+
+/* Content Pages */
+.lessons-page, .lesson-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 60px; /* Space for footer */
+}
+
+/* Remove all previous modifications */
+.page-wrapper, .lessons-page-wrapper, .lesson-page-wrapper, .transparent-footer {
+  all: unset;
+}

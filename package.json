@@ -1,0 +1,33 @@
+{
+  "name": "space-sql",
+  "version": "0.0.1-SNAPSHOT",
+  "description": "SQL Learning Platform with interactive exercises",
+  "scripts": {
+    "install-frontend": "cd frontend && npm install",
+    "build-frontend": "cd frontend && npm run build",
+    "start-frontend": "cd frontend && npm start",
+    "start-backend": "mvn spring-boot:run -Dspring-boot.run.profiles=dev",
+    "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "build": "mvn clean install",
+    "test": "mvn test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/space-sql.git"
+  },
+  "keywords": [
+    "sql",
+    "learning",
+    "education",
+    "spring-boot",
+    "react"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "react-bootstrap": "^2.10.10"
+  }
+}
