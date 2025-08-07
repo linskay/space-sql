@@ -1,40 +1,84 @@
-# Архитектурная визуализация (liam)
+# Документация по фронтенду
 
-## ERD: Архитектурная диаграмма БД
+## Обзор
 
-[![View ERD Online](https://img.shields.io/badge/ERD--View%20Online-brightgreen?logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHJ4PSIzIiBmaWxsPSIjM2E4YmZmIi8+PHBhdGggZD0iTTUgN0gxMVY5SDVaIiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9IjgiIGN5PSI0IiByPSIxIiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9IjgiIGN5PSIxMiIgcj0iMSIgZmlsbD0id2hpdGUiLz48L3N2Zz4=)](https://liambx.com/erd/p/github.com/linskay/space-sql/blob/master/schema.sql)
+Фронтенд-часть приложения Space SQL представляет собой React-приложение, которое взаимодействует с бэкендом через REST API.
 
-### Как посмотреть ERD-диаграмму локально
+## Установка и запуск
 
-1. Сгенерируй актуальную схему:
-   ```sh
-   mvn process-resources
-   npx @liam-hq/cli erd build --input schema.sql --format postgres
-   ```
-2. Запусти локальный сервер в папке dist:
-   ```sh
-   npx http-server dist/
-   ```
-3. Открой [http://localhost:8080](http://localhost:8080) (или другой свободный порт) в браузере.
+### Требования
 
----
+- Node.js (рекомендуется версия 16.x или выше)
+- npm (идёт в комплекте с Node.js) или Yarn
 
-- Вся визуализация лежит в папке `dist/` (создаётся автоматически).
-- Для документации или wiki можно сделать скриншот ERD или экспортировать SVG.
+### Установка зависимостей
 
-### Структура папок
+```bash
+# Переходим в директорию фронтенда
+cd frontend
 
-- `dist/` — интерактивная ERD-диаграмма (всё, что нужно для просмотра через http-server)
-- `docs/README2.md` — инструкция по запуску и использованию ERD
-- `schema.sql` — актуальная схема БД (генерируется автоматически)
+# Устанавливаем зависимости
+npm install
+# или, если используете Yarn
+yarn install
+```
 
----
-- Файл `schema.sql` всегда актуализируется автоматически через Liquibase.
-- Для работы нужен Node.js и npm (см. инструкции выше).
-- Если возникнут ошибки — смотри логи или обратись к команде.
+### Запуск в режиме разработки
 
-# Инструкция по запуску фронтенда
+```bash
+# Запускаем фронтенд
+npm start
+# или
+yarn start
+```
 
-[Вернуться к основной документации](./README.md)
+Приложение будет доступно по адресу: [http://localhost:3000](http://localhost:3000)
 
-## Установка
+## Структура проекта
+
+```
+frontend/
+├── public/              # Статические файлы
+├── src/
+│   ├── components/      # Переиспользуемые React-компоненты
+│   ├── pages/           # Страницы приложения
+│   ├── services/        # Сервисы для работы с API
+│   ├── styles/          # Глобальные стили
+│   ├── App.js           # Корневой компонент
+│   └── index.js         # Точка входа
+├── package.json         # Зависимости и скрипты
+└── README.md            # Локальная документация
+```
+
+## Настройка окружения
+
+Создайте файл `.env` в корне фронтенд-проекта и настройте переменные окружения:
+
+```env
+REACT_APP_API_URL=http://localhost:8080/api  # URL бэкенд-сервера
+REACT_APP_GH_CLIENT_ID=your_github_client_id # ID приложения GitHub OAuth (если используется)
+```
+
+## Доступные скрипты
+
+- `npm start` - Запуск приложения в режиме разработки
+- `npm test` - Запуск тестов
+- `npm run build` - Сборка для продакшена
+- `npm run eject` - Извлечение конфигурации (необратимо)
+
+## Деплой
+
+Для деплоя собранной версии приложения выполните:
+
+```bash
+# Сборка приложения
+npm run build
+
+# Собранное приложение будет доступно в папке build/
+```
+
+## Дополнительная информация
+
+- [Документация React](https://reactjs.org/)
+- [Создание React-приложения](https://create-react-app.dev/)
+- [Руководство по стилю](https://github.com/airbnb/javascript/tree/master/react)
