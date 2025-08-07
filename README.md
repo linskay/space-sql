@@ -1,3 +1,5 @@
+![Текст абзаца (1)](https://github.com/user-attachments/assets/62c98eae-5051-4fde-afdb-89ef6c5e2f96)
+
 <div align="center">
   <h1>🚀 Space SQL</h1>
   <p>Интерактивная платформа для изучения SQL в игровой форме</p>
