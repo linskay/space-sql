@@ -32,7 +32,7 @@ const Register = () => {
     
     try {
       await register(email, password);
-      navigate('/lessons'); // Redirect to lessons after successful registration
+      navigate('/'); // Перенаправить на главную после успешной регистрации
     } catch (error) {
       // The authError from useAuth will be displayed in the form
       console.error('Registration failed:', error);

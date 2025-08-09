@@ -34,77 +34,60 @@ const Home = () => {
         <StarBackground isMainPage={true} />
       </div>
       
-      {/* Основной контент */}
-      <div className="relative flex-1 flex flex-col justify-center items-center z-10 text-center px-4">
-        <div className="bg-space-dark bg-opacity-70 backdrop-blur-lg rounded-3xl p-8 lg:p-12 max-w-4xl mx-auto border border-cosmic-purple border-opacity-30">
-          <motion.div
-            variants={heroVariants}
-            initial="hidden"
-            animate="visible"
-            className="space-y-8"
+      {/* Основной контент — стартовый экран без карточек */}
+      <div className="relative flex-1 flex flex-col justify-center items-center z-10 text-center px-6">
+        <motion.div
+          variants={heroVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8 max-w-3xl"
+        >
+          <motion.h1 
+            variants={itemVariants}
+            className="cosmic-title text-5xl lg:text-7xl"
           >
-            <motion.h1 
-              variants={itemVariants}
-              className="cosmic-title text-5xl lg:text-7xl"
+            DevUniverse
+          </motion.h1>
+
+          <motion.p 
+            variants={itemVariants}
+            className="text-xl lg:text-2xl text-white/80 font-space leading-relaxed"
+          >
+            Изучайте SQL, покоряя космос
+          </motion.p>
+
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
+            <Button 
+              variant="ghost"
+              size="lg"
+              starColor="#8a2be2"
+              borderColor="rgba(138,43,226,0.5)"
+              glowEffect
+              magnetic
+              onClick={() => navigate(currentUser ? '/lessons' : '/register')}
+              className="px-10"
             >
-              Space SQL
-            </motion.h1>
-            
-            <motion.p 
-              variants={itemVariants}
-              className="text-xl lg:text-2xl text-gray-300 font-space max-w-2xl mx-auto leading-relaxed"
-            >
-              Изучайте SQL, покоряя космос
-            </motion.p>
-            
-            <motion.div 
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
+              🚀 {currentUser ? 'Продолжить обучение' : 'Начать обучение'}
+            </Button>
+
+            {!currentUser && (
               <Button 
-                size="large"
-                onClick={() => navigate(currentUser ? '/lessons' : '/register')}
-                className="text-lg px-10 py-4"
+                variant="ghost"
+                size="lg"
+                starColor="#2de2e6"
+                borderColor="rgba(45,226,230,0.45)"
+                magnetic
+                onClick={() => navigate('/login')}
+                className="px-10"
               >
-                🚀 {currentUser ? 'Продолжить обучение' : 'Начать обучение'}
+                Войти в систему
               </Button>
-              
-              {!currentUser && (
-                <Button 
-                  variant="secondary"
-                  size="large"
-                  onClick={() => navigate('/login')}
-                  className="text-lg px-10 py-4"
-                >
-                  Войти в систему
-                </Button>
-              )}
-            </motion.div>
-            
-            <motion.div 
-              variants={itemVariants}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 text-sm"
-            >
-              <div className="flex flex-col items-center space-y-2">
-                <span className="text-2xl">📚</span>
-                <span className="text-cosmic-blue font-space">Интерактивные уроки</span>
-              </div>
-              <div className="flex flex-col items-center space-y-2">
-                <span className="text-2xl">⚡</span>
-                <span className="text-cosmic-green font-space">Практические задания</span>
-              </div>
-              <div className="flex flex-col items-center space-y-2">
-                <span className="text-2xl">🌟</span>
-                <span className="text-cosmic-purple font-space">Космический опыт</span>
-              </div>
-            </motion.div>
+            )}
           </motion.div>
-        </div>
-      </div>
-      
-      {/* Футер */}
-      <div className="relative z-10 bg-space-dark bg-opacity-80 backdrop-blur-sm border-t border-cosmic-purple border-opacity-20">
-        <Footer />
+        </motion.div>
       </div>
     </div>
   );

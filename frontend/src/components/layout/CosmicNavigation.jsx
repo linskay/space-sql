@@ -54,7 +54,7 @@ const CosmicNavigation = () => {
               className="flex items-center space-x-2 text-2xl font-cosmic text-cosmic-purple hover:text-cosmic-blue transition-colors duration-300"
             >
               <span className="text-3xl">🚀</span>
-              <span className="glow-text">Space SQL</span>
+              <span className="glow-text">DevUniverse</span>
             </Link>
           </motion.div>
 

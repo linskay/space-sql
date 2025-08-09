@@ -12,7 +12,7 @@ export default function SpaceHero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        Space SQL
+        DevUniverse
       </motion.h1>
       
       <motion.p 

@@ -11,7 +11,7 @@ const Footer = () => {
     >
       <div className="max-w-7xl mx-auto px-4">
         <p className="text-gray-400 font-space text-sm">
-          🚀 Space SQL © 2025 • No PHP - No Problems • 
+          🚀 DevUniverse © 2025 • No PHP - No Problems • 
           <span className="text-cosmic-purple ml-2">Made with ❤️ in the cosmos</span>
         </p>
       </div>

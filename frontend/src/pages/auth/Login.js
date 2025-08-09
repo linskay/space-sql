@@ -12,8 +12,8 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Определяем, откуда пришел пользователь, чтобы вернуть его обратно после логина
-  const from = location.state?.from?.pathname || '/lessons';
+  // После логина всегда отправляем на главную страницу
+  const from = '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ const Login = () => {
     
     try {
       await login(email, password);
-      // После успешного входа перенаправляем пользователя
+      // После успешного входа перенаправляем пользователя на главную
       navigate(from, { replace: true });
     } catch (err) {
       // Ошибка будет обработана и отображена через `error` из useAuth
