@@ -10,7 +10,7 @@ export default function Header() {
   return (
     <header className="app-header">
       <nav>
-        <Link to="/" className="logo-link">Space SQL</Link>
+        <Link to="/" className="logo-link">DevUniverse</Link>
         <div className="nav-links">
           <Link to="/lessons" className={location.pathname.startsWith('/lessons') ? 'active' : ''}>
             Уроки

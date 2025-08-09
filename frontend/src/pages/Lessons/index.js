@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import LessonsList from '../../components/LessonsList';
+import { Button } from '../../components/ui';
 import axios from 'axios';
 
 export default function Lessons() {
@@ -47,37 +49,79 @@ export default function Lessons() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-xl text-blue-500">Загрузка уроков...</div>
+      <div className="flex justify-center items-center min-h-screen">
+        <motion.div 
+          className="text-center space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="loading-spinner mx-auto" />
+          <p className="text-cosmic-blue text-xl font-space">Загрузка уроков...</p>
+        </motion.div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-        <p className="font-bold">Ошибка</p>
-        <p>{error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      <div className="flex justify-center items-center min-h-screen p-6">
+        <motion.div 
+          className="text-center max-w-md"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
         >
-          Попробовать снова
-        </button>
+          <div className="bg-red-900 bg-opacity-30 border border-red-500 rounded-lg p-6">
+            <div className="text-4xl mb-4">⚠️</div>
+            <h2 className="text-xl font-space text-red-300 mb-4">Ошибка загрузки</h2>
+            <p className="text-gray-400 mb-6">{error}</p>
+            <Button 
+              variant="danger"
+              onClick={() => window.location.reload()}
+            >
+              Попробовать снова
+            </Button>
+          </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="lessons-page container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-white">Уроки SQL</h1>
-      {lessons.length > 0 ? (
-        <LessonsList lessons={lessons} />
-      ) : (
-        <div className="text-center py-10">
-          <p className="text-gray-400 text-lg">Нет доступных уроков</p>
-        </div>
-      )}
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        <motion.div 
+          className="text-center py-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="cosmic-title text-4xl lg:text-5xl mb-4">
+            Уроки SQL
+          </h1>
+          <p className="text-xl text-gray-300 font-space max-w-2xl mx-auto">
+            Изучайте SQL шаг за шагом в космическом путешествии
+          </p>
+        </motion.div>
+
+        {lessons.length > 0 ? (
+          <LessonsList lessons={lessons} />
+        ) : (
+          <motion.div 
+            className="text-center py-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="text-6xl mb-6">🌌</div>
+            <p className="text-gray-400 text-lg font-space">
+              Пока нет доступных уроков
+            </p>
+            <p className="text-gray-500 text-sm mt-2">
+              Скоро здесь появятся захватывающие космические приключения!
+            </p>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

@@ -4,8 +4,11 @@ import '../styles.css';
 const StarBackground = ({ children, isMainPage = true }) => {
   const [stars, setStars] = useState([]);
   const containerRef = useRef(null);
-  const animationFrameRef = useRef(null);
+  // Separate RAF refs for smoothing loop and star update loop
+  const smoothRafRef = useRef(null);
+  const starsRafRef = useRef(null);
   const mousePosition = useRef({ x: 0, y: 0 });
+  const cursorPx = useRef({ x: 0, y: 0 });
 
   // Create stars with more variety
   useEffect(() => {
@@ -13,7 +16,16 @@ const StarBackground = ({ children, isMainPage = true }) => {
     const newStars = [];
     
     for (let i = 0; i < starCount; i++) {
-      const size = isMainPage ? Math.random() * 3 + 1 : Math.random() * 2 + 0.5;
+      // Size distribution: 55% small (1-2.5), 35% medium (2.5-4.5), 10% large (5-8)
+      const r = Math.random();
+      let size;
+      if (r < 0.55) {
+        size = isMainPage ? Math.random() * 1.5 + 1 : Math.random() * 1 + 0.5;
+      } else if (r < 0.9) {
+        size = isMainPage ? Math.random() * 2 + 2.5 : Math.random() * 1.5 + 1.5;
+      } else {
+        size = isMainPage ? Math.random() * 3 + 5 : Math.random() * 2 + 3.5;
+      }
       const opacity = isMainPage ? Math.random() * 0.8 + 0.2 : Math.random() * 0.5 + 0.1;
       
       newStars.push({
@@ -32,13 +44,13 @@ const StarBackground = ({ children, isMainPage = true }) => {
     setStars(newStars);
   }, [isMainPage]);
 
-  // Update stars position based on mouse movement with enhanced parallax
+  // Update stars position based on mouse movement with enhanced parallax + subtle magnetic effect
   const updateStars = useCallback(() => {
     if (!isMainPage) return;
     
-    const starElements = document.querySelectorAll('.star');
-    const time = Date.now();
     const container = containerRef.current;
+    const starElements = container ? container.querySelectorAll('.star') : [];
+    const time = Date.now();
     if (!container) return;
     
     // Get container dimensions for center calculation
@@ -61,6 +73,23 @@ const StarBackground = ({ children, isMainPage = true }) => {
       const offsetX = mousePosition.current.x * star.speed * parallaxMultiplier * 0.6; // Reduced multiplier
       const offsetY = mousePosition.current.y * star.speed * parallaxMultiplier * 0.6;
       
+      // Subtle magnetic attraction towards the cursor when nearby
+      const starPosX = (star.x / 100) * rect.width;
+      const starPosY = (star.y / 100) * rect.height;
+      const toCursorX = cursorPx.current.x - starPosX;
+      const toCursorY = cursorPx.current.y - starPosY;
+      const distToCursor = Math.hypot(toCursorX, toCursorY);
+      const magnetRadius = 140; // px
+      const magnetStrength = 0.35; // base strength
+      let magnetX = 0;
+      let magnetY = 0;
+      if (distToCursor > 0 && distToCursor < magnetRadius) {
+        const influence = 1 - distToCursor / magnetRadius; // 0..1
+        const strength = magnetStrength * influence * influence * star.speed; // ease-in
+        magnetX = toCursorX * strength;
+        magnetY = toCursorY * strength;
+      }
+
       // Add dynamic twinkling effect
       const twinkle = Math.sin(time * star.twinkleSpeed + star.twinkleOffset) * 0.4 + 0.6;
       const currentOpacity = star.opacity * twinkle;
@@ -70,7 +99,7 @@ const StarBackground = ({ children, isMainPage = true }) => {
       const scale = 1 + (moveIntensity * star.speed * 0.2);
       
       // Apply transformations and styles with enhanced effects
-      starEl.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+      starEl.style.transform = `translate(${offsetX + magnetX}px, ${offsetY + magnetY}px) scale(${scale})`;
       starEl.style.opacity = currentOpacity;
       
       // Add color shift based on position and time
@@ -80,8 +109,9 @@ const StarBackground = ({ children, isMainPage = true }) => {
     });
     
     // Continue the animation loop
-    animationFrameRef.current = requestAnimationFrame(updateStars);
+    starsRafRef.current = requestAnimationFrame(updateStars);
   }, [isMainPage, stars]);
+
 
   // Mouse move handler with smoother tracking
   useEffect(() => {
@@ -101,6 +131,8 @@ const StarBackground = ({ children, isMainPage = true }) => {
       // Calculate position relative to center (-0.5 to 0.5)
       targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 60; // Increased range for more movement
       targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 60;
+      // Store absolute cursor position in container space for magnet effect
+      cursorPx.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     };
 
     const animate = () => {
@@ -112,26 +144,32 @@ const StarBackground = ({ children, isMainPage = true }) => {
       mousePosition.current = { x: currentX, y: currentY };
       
       // Continue the animation loop
-      animationFrameRef.current = requestAnimationFrame(animate);
+      smoothRafRef.current = requestAnimationFrame(animate);
     };
 
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener('mousemove', handleMouseMove);
-      // Start the animation loop
-      animationFrameRef.current = requestAnimationFrame(animate);
-    }
+    // Track mouse globally so фон позади контента тоже реагирует
+    window.addEventListener('mousemove', handleMouseMove);
+    // Start the animation loop
+    smoothRafRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (container) {
-        container.removeEventListener('mousemove', handleMouseMove);
-      }
+      window.removeEventListener('mousemove', handleMouseMove);
       // Clean up animation frame
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      if (smoothRafRef.current) cancelAnimationFrame(smoothRafRef.current);
+      if (starsRafRef.current) cancelAnimationFrame(starsRafRef.current);
     };
   }, [isMainPage]);
+
+  // Start the star update loop when stars are created
+  useEffect(() => {
+    if (!isMainPage) return;
+    if (stars.length === 0) return;
+    // Kick off the loop once, it will re-schedule itself
+    starsRafRef.current = requestAnimationFrame(updateStars);
+    return () => {
+      if (starsRafRef.current) cancelAnimationFrame(starsRafRef.current);
+    };
+  }, [isMainPage, stars, updateStars]);
 
   // Generate star elements with optimized rendering
   const renderStars = () => {

@@ -1,96 +1,93 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import StarBackground from '../../components/StarBackground';
 import Footer from '../../components/Footer';
+import { Button } from '../../components/ui';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+
+  const heroVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.8,
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 }
+  };
 
   return (
-    <div style={{
-      position: 'relative',
-      width: '100%',
-      height: '100vh',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
+    <div className="relative w-full h-screen overflow-hidden flex flex-col">
       {/* Звёздный фон */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 1
-      }}>
+      <div className="absolute inset-0 z-0">
         <StarBackground isMainPage={true} />
       </div>
       
-      {/* Основной контент */}
-      <div style={{
-        position: 'relative',
-        width: '100%',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 10,
-        color: 'white',
-        textAlign: 'center',
-        padding: '20px',
-        backgroundColor: 'rgba(10, 10, 26, 0.7)'
-      }}>
-      <h1 style={{
-        fontSize: '3rem',
-        marginBottom: '1.5rem',
-        background: 'linear-gradient(90deg, #8a2be2, #00ff9d)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        fontFamily: '"Press Start 2P", cursive',
-      }}>
-        Space SQL
-      </h1>
-      
-      <p style={{
-        fontSize: '1.5rem',
-        marginBottom: '3rem',
-        fontFamily: '"Roboto Mono", monospace',
-      }}>
-        Изучайте SQL, покоряя космос
-      </p>
-      
-      <Link 
-        to="/lessons" 
-        style={{
-          padding: '1rem 2.5rem',
-          background: 'linear-gradient(45deg, #8a2be2, #00ff9d)',
-          color: 'white',
-          border: 'none',
-          borderRadius: '50px',
-          fontSize: '1.2rem',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          textDecoration: 'none',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 4px 15px rgba(138, 43, 226, 0.4)',
-        }}
-      >
-        Начать обучение
-      </Link>
-      </div>
-      
-      {/* Футер */}
-      <div style={{
-        position: 'relative',
-        zIndex: 10,
-        width: '100%',
-        backgroundColor: 'rgba(15, 12, 41, 0.8)',
-        backdropFilter: 'blur(5px)',
-        padding: '1rem 0',
-        marginTop: 'auto'
-      }}>
-        <Footer />
+      {/* Основной контент — стартовый экран без карточек */}
+      <div className="relative flex-1 flex flex-col justify-center items-center z-10 text-center px-6">
+        <motion.div
+          variants={heroVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8 max-w-3xl"
+        >
+          <motion.h1 
+            variants={itemVariants}
+            className="cosmic-title text-5xl lg:text-7xl"
+          >
+            DevUniverse
+          </motion.h1>
+
+          <motion.p 
+            variants={itemVariants}
+            className="text-xl lg:text-2xl text-white/80 font-space leading-relaxed"
+          >
+            Изучайте SQL, покоряя космос
+          </motion.p>
+
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
+            <Button 
+              variant="ghost"
+              size="lg"
+              starColor="#8a2be2"
+              borderColor="rgba(138,43,226,0.5)"
+              glowEffect
+              magnetic
+              onClick={() => navigate(currentUser ? '/lessons' : '/register')}
+              className="px-10"
+            >
+              🚀 {currentUser ? 'Продолжить обучение' : 'Начать обучение'}
+            </Button>
+
+            {!currentUser && (
+              <Button 
+                variant="ghost"
+                size="lg"
+                starColor="#2de2e6"
+                borderColor="rgba(45,226,230,0.45)"
+                magnetic
+                onClick={() => navigate('/login')}
+                className="px-10"
+              >
+                Войти в систему
+              </Button>
+            )}
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
