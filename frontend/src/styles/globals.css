@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&family=Roboto+Mono:wght@300;400;500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties для космической темы */
+:root {
+  --space-dark: #0d0221;
+  --space-purple: #2d0b59;
+  --space-deep: #0f0c29;
+  --space-medium: #302b63;
+  --space-light: #24243e;
+  
+  --cosmic-blue: #2de2e6;
+  --cosmic-purple: #8a2be2;
+  --cosmic-pink: #ff2e88;
+  --cosmic-green: #00ff9d;
+  --cosmic-cyan: #00aaff;
+  --cosmic-magenta: #ff00ff;
+  
+  --starlight: #ffffff;
+  --text-muted: #b8b8b8;
+  
+  --font-cosmic: "Press Start 2P", cursive;
+  --font-mono: "Roboto Mono", monospace;
+  --font-space: "Orbitron", sans-serif;
+  
+  --cosmic-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  --cosmic-purple-gradient: linear-gradient(90deg, #8a2be2, #00ff9d);
+  --cosmic-blue-gradient: linear-gradient(45deg, #2de2e6, #8a2be2);
+  --space-dark-gradient: linear-gradient(135deg, #0a081a 0%, #201d47 50%, #18182f 100%);
+}
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-mono);
+  background: var(--space-dark);
+  color: var(--starlight);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility Classes */
+@layer components {
+  .cosmic-button {
+    @apply px-6 py-3 rounded-full font-bold text-white cursor-pointer transition-all duration-300 transform hover:scale-105;
+    background: var(--cosmic-purple-gradient);
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+  }
+  
+  .cosmic-button:hover {
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
+    transform: translateY(-2px) scale(1.05);
+  }
+  
+  .cosmic-button:active {
+    transform: translateY(1px) scale(1.02);
+  }
+  
+  .cosmic-card {
+    @apply bg-opacity-80 backdrop-blur-sm rounded-2xl p-6 border border-opacity-30;
+    background: rgba(26, 26, 46, 0.8);
+    border-color: var(--cosmic-purple);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .cosmic-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(138, 43, 226, 0.3);
+  }
+  
+  .cosmic-input {
+    @apply w-full p-4 rounded-lg font-mono text-white bg-opacity-50 border border-opacity-50 outline-none transition-all duration-300;
+    background: rgba(0, 0, 0, 0.5);
+    border-color: var(--cosmic-blue);
+  }
+  
+  .cosmic-input:focus {
+    border-color: var(--cosmic-purple);
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+  }
+  
+  .glow-text {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+  
+  .cosmic-title {
+    @apply font-cosmic text-4xl lg:text-6xl mb-6;
+    background: var(--cosmic-purple-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+  }
+  
+  .page-transition {
+    @apply transition-all duration-500 ease-out;
+  }
+  
+  .loading-spinner {
+    @apply w-8 h-8 border-4 border-cosmic-purple border-t-transparent rounded-full animate-spin;
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translatey(0px); }
+  50% { transform: translatey(-10px); }
+  100% { transform: translatey(0px); }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(138, 43, 226, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(138, 43, 226, 0.8); }
+}
+
+@keyframes slide-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Star Background Styles */
+.star-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  background: var(--cosmic-gradient);
+}
+
+.star-field {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  will-change: transform;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: transform 0.1s ease-out;
+  animation: twinkle 3s infinite alternate;
+}
+
+.content-layer {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cosmic-title {
+    @apply text-3xl;
+  }
+  
+  .cosmic-card {
+    @apply p-4;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(13, 2, 33, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cosmic-purple);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cosmic-blue);
+}
